@@ -18,7 +18,7 @@ The beam distribution is updated and the rms beam emittances are recomputed, giv
 
 ## How to Compile and Run the Code
 
-1. Compile the code with, for instance, `gcc`: `g++ sire.c -o sire`. The same would be done with a different compiler by changing the invoked executable (for instance `g++` -> `clang`).
+1. Compile the code with, for instance, `gcc`: `g++ sire.c -o sire`. The same would be done with a different compiler by changing the invoked executable (for instance `g++` -> `clang++`).
 2. Run the code, providing a TWISS file (e.g. from `MAD-X`), a parameters file and a target for the outputs:
 ```bash
 ./sire twiss.tfs params_file.dat outputfiles_naming
