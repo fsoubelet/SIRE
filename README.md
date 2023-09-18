@@ -9,8 +9,12 @@ The beam distribution is updated and the RMS beam emittances are recomputed, giv
 * Revised by F. Antoniou (2014)
 * Revised by Stefania Papadopoulou (2016)
 
+<details>
+  <summary><b>Note: Code Status</b></summary>
 
-**NOTE**: This code is not maintained and has not been for a long time. This repository acts as a save and working point start for my own work on IBS, which will take inspiration from SIRE and use it for benchmarks.
+  The code is not maintained and has not been for a long time. This repository acts as a save and working point start for my own work on IBS, which will take inspiration from SIRE as well as use it for benchmarks.
+
+</details>
 
 ## How to Compile and Run the Code
 
@@ -111,4 +115,9 @@ When done so, the following modifications are made:
 2. The emittance per particle is re-calculated based on the exponential IBS growth in a time step `TIMEINJ`, calculated from the `NIBSruns` and `TEMPO` values. 
 3. Tracking continues with the interpolated distribution.
 
-**Note**: The `fastrun` option is meant to speed up the simulation by simplifying the number of performed IBS kicks. It is left to the user to check that results are valid, which might not be the case based on your lattice, beam composition, included effects etc.
+<details>
+  <summary><b>Note: Use of fastrun</b></summary>
+
+  The `fastrun` option is meant to speed up the simulation by simplifying the number of performed IBS kicks. It is left to the user to check that results are valid, which might not be the case based on your lattice, beam composition, included effects etc.
+
+</details>
