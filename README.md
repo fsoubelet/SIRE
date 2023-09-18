@@ -12,9 +12,9 @@ The beam distribution is updated and the RMS beam emittances are recomputed, giv
 
 **NOTE**: This code is not maintained and has not been for a long time. This repository acts as a save and working point start for my own work on IBS, which will take inspiration from SIRE and use it for benchmarks.
 
-## HOW TO COMPILE AND RUN THE CODE
+## How to Compile and Run the Code
 
-1. Compile the code with, for instance, `gcc`: `g++ sire.c -o sire`
+1. Compile the code with, for instance, `gcc`: `g++ sire.c -o sire`. The same would be done with a different compiler by changing the invoked executable.
 2. Run the code, providing a TWISS file (e.g. from `MAD-X`), a parameters file and a target for the outputs:
 ```bash
 ./sire twiss.tfs params_file.dat outputfile_name
@@ -35,7 +35,7 @@ TEMPO: The full time length of the simulation.
 nturnstostudy: The total number of turns.
 NIBSruns: The number of timesteps you devide the TEMPO to calculate IBS.
 oneturn: A boolean integer, 1 for 1-turn calculation, 0 for multi-turn
-fastrun: A boolean integer, 1 if interpolation is used every TIMEINJ, NIBSruns determines how many turns are skipped for the IBS calculation. So be careful to have a sufficient NIBSruns for a specific time.
+fastrun: A boolean integer, 1 if interpolation is used every time step TIMEINJ, and the NIBSruns parameter determines how many turns are skipped for the IBS calculation. So be careful to have a sufficient value for NIBSruns for a specific simulation time.
 continuation: A boolean integer, 1 so that if a job is killed it continues from where it stopped, 0 otherwise.
 epsx: The starting (geometrical!) horizontal emittance.
 epsz: The starting (geometrical!) vertical emittance.
@@ -65,51 +65,50 @@ convsteadystate: Track until convergeance to steady-state not in full TEMPO time
 checktime: A boolean integer, 0 if you want to see the TEMPO, 1 to see the turns instead of the TEMPO.
 ```
 
+One may wish to modify the following in the SIRE code itself (`sire.c`):
+```txt
+precision: Determines how the recurrences work: elements of the lattice with twiss functions differing of less than precision % are considered equal. The closer it is to 1 -> more recurrences -> shorter lattice -> less computation time but also less accurancy. The closer it is to 0 -> less recurrences -> higher accuracy.
+renormbinningtrans=1,renormbinningall=1 sees ncellx and ncellz as f(ncells) using the mppercell
+mppercell=5 is the #mp/cell
+```
 
+3. The output files are named based on the third provided argument:
+```txt
+RES_TWISS_arg3.txt --> The new twiss file after recurrences.
+RES_EMITTANCE_arg3.txt --> The emittance at each point of the lattice after the IBS kicks (for 1-turn calculations only). This contains four columns: s, exm, ezm, esm
+RES_Growth_Rates_arg3.txt --> A file with emittances for each time step. The growth rates are the zero-ed columns, so they are not saved. In this file, L{1}=timesteps (so the NIBSruns), L{2},L{3}=the emittances and energyspread=sqrt(L{4}/2).
+RES_DISTRIB_arg3.txt --> The distribution file, that has a length=#mp. One can also ask for the output distribution.
+```
 
-in sire code:
-	precision: tells you how tha reccurences work. Elements of the lattice with twiss functions differing of less than prec.% are considered equal.
-	The closer it is to 1->more reccurences->shorter lattice->less time-> but also less accurancy. The closer it is to 0->less recurences->higher accurancy.
-	
-	renormbinningtrans=1,renormbinningall=1 sees ncellx and ncellz as f(ncells) using the mppercell
-	mppercell=5 is the #mp/cell
+## Some More Implementation Details
 
+### Program Flow
 
-1. Output files using the arg3 for the naming of the output files:
-  RES_TWISS_arg3.txt --> The new twiss file after recurrences
-  RES_EMITTANCE_arg3.txt --> The emittance at each point of the lattice after the IBS kicks (for 1-turn calculations only). Four columns (s, exm, ezm, esm)
-  RES_Growth_Rates_arg3.txt --> File with emittances for each time step! The Growth rates are the zeroed columns, so they are not saved. 
-				    In this file, L{1}=timesteps (so the NIBSruns), L{2},L{3}=the emittances and energyspread=sqrt(L{4}/2).
-  RES_DISTRIB_arg3.txt --> The distribution file, that has a length=#mp.
-  we can also ask for the output distribution.
-  
+The main program execution flow goes as follows:
 
-*****************************
-*                           *
-* MORE COMMENTS AND DETAILS *
-*                           *
-*****************************
+1. Reads the `MAD-X` TWISS and input parameters files; and generates the names of the output files.
+2. If `flag_rec` is set to 1, optimizes the number of points in the lattice to be used in order to speed up the simulation. This generates the new TWISS file!
+3. Generates the distribution of macro particles given the mean invariants and random phases.
+4. If the `IBSflag` is set to 1, applies the transformation to the momentum frame, then applies the IBS routine in each point of the lattice and transforms back to the invariants frame.
+5. If `oneturn` is set to 1, the above calculation of step 4 is done only once and the one-turn emittance evolution around the lattice is written in an output file. Otherwise the tracking of the distribution evolution is followed for every element and for each turn for a time step of `TEMPO` or until convergence. The mean growth times and mean emittances are calculated and written in an output file every one `timestep` `TIMEINJ`.
+6. If `damping` and `q_ex` are both set to 1, the effects of synchrotron radiation damping and quantum excitation are taken into account.
 
-1. Structure of main: 
-  a. Reads madx and input parameters files and generates the names of the output files
-  b. if flag_rec then optimizes the number of points in the lattice to be used in order to speed up the simulation --> Generates the new twiss file
-  c. Generates the distribution of macroparticles given the mean invariants values and random phases
-  d. if the IBSflag=1 then apply the transformation to the momentum frame, then apply the IBS routine in each point of the lattice, transform back to the invariants frame
-  e. If oneturn=1 the above calculation is done only once and the one-turn emittance evolution around the lattice is writen in an output file
-  e. If oneturn=0 the tracking of the distribution evolution is followed for every element anf for each turn for a timestep TEMPO or until convergance. The mean growth times and mean emittances are calculated and written in an output file every one timestep TIMEINJ
-  f. If damping=1 and q_ex=1 then the effects of synchrotron radiation damping and quantum excitation are taken into account.
-  
-2.  How the IBS routine works:
-  a. Finds the limits of the distributions
-  b. The distributions are splitted in cells (uniform split with respect to x, z, s)
-  c. Puts the macroparticles in cells and calculates the number of macroparticles and the density of mp in each cell
-  d. Applies the scattering kicks between the macroparticles in each cell (binary collisions) --> redestribution of phase space
-  
-3. How the fastrun is applied: 
-  a. The IBS is applied in oneturn and the growth rate per particle is calculated
-  b. The emittance per particle is recalculated based on the exponential IBS growth in a timestem TIMEINJ. 
-  c. contunue tracking with the interpolated distribution
+### The IBS Routine
 
-  Comment: The fastrun is applied in order to speed up the simulation. The user has to check if it gives valid results   
-  
-  
+The core of the performed calculations are the application of IBS kicks, which are done according to the steps below:
+
+1. Finds the limits of the distributions.
+2. The distributions are then split in cells (uniform split with respect to x, z and s coordinates).
+3. Macro particles are put in the determined cells and the program calculates the number of macro particles and their density in each cell.
+4. Scattering kicks are applied between macro particles in the same cell, for each cell (binary collisions) -> redistribution of phase space.
+
+### Application of fastrun
+
+When setting `fastrun=1` and a value for `NIBSruns` in the parameter file one can speed up the calculation by not applying the IBS kicks at every turn.
+When done so, the following modifications are made:
+
+1. The IBS is applied in one turn and the growth rate per particle is calculated.
+2. The emittance per particle is re-calculated based on the exponential IBS growth in a time step `TIMEINJ`, calculated from the `NIBSruns` and `TEMPO` values. 
+3. Tracking continues with the interpolated distribution.
+
+**Note**: The `fastrun` option is meant to speed up the simulation by simplifying the number of performed IBS kicks. It is left to the user to check that results are valid, which might not be the case based on your lattice, beam composition, included effects etc.
