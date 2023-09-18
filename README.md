@@ -5,8 +5,8 @@ After specifying the beam distribution and the optics along a lattice, `SIRE` it
 If requested, it also evaluates the effects of synchrotron radiation damping and quantum excitation.
 The beam distribution is updated and the rms beam emittances are recomputed, giving finally as output the emittance evolution in time.
 
-* Developed by A. Vivoli (2010)
-* Revised by F. Antoniou (2014)
+* Developed by Alessandro Vivoli (2010)
+* Revised by Fanouria Antoniou (2014)
 * Revised by Stefania Papadopoulou (2016)
 
 <details>
