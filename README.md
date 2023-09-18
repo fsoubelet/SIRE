@@ -1,7 +1,7 @@
 # SIRE: Software for IBS and Radiation Effects
 
-The SIRE code was inspired by MOCAC (MOnte CArlo Code).
-After specifying the beam distribution and the optics along a lattice, SIRE iteratively computes intra-beam collisions between pairs of macro-particles.
+The `SIRE` code was inspired by `MOCAC` (MOnte CArlo Code).
+After specifying the beam distribution and the optics along a lattice, `SIRE` iteratively computes Intra-Beam Scattering (IBS) collisions between pairs of macro-particles.
 If requested, it also evaluates the effects of synchrotron radiation damping and quantum excitation.
 The beam distribution is updated and the RMS beam emittances are recomputed, giving finally as output the emittance evolution in time. 
 
@@ -60,7 +60,7 @@ momentum: The beam momentum in [MeV].
 massparticle: The beam particle's mass in [MeV].
 chargeparticle: The charge of the particle (for instance 1 for e-).
 numbunch: The bunch population.
-numpart: The number of macroparticles.
+numpart: The number of macro-particles.
 ncellx: The number of cells to use in the horizontal plane.
 ncellz: The number of cells to use in the vertical plane.
 ncells: The number of cells to use in the longitudinal plane.
@@ -92,7 +92,7 @@ The main program execution flow goes as follows:
 
 1. Reads the `MAD-X` TWISS and input parameters files; and generates the names of the output files.
 2. If `flag_rec` is set to 1, optimizes the number of points in the lattice to be used in order to speed up the simulation. This generates the new TWISS file!
-3. Generates the distribution of macro particles given the mean invariants and random phases.
+3. Generates the distribution of macro-particles given the mean invariants and random phases.
 4. If the `IBSflag` is set to 1, applies the transformation to the momentum frame, then applies the IBS routine in each point of the lattice and transforms back to the invariants frame.
 5. If `oneturn` is set to 1, the above calculation of step 4 is done only once and the one-turn emittance evolution around the lattice is written in an output file. Otherwise the tracking of the distribution evolution is followed for every element and for each turn for a time step of `TEMPO` or until convergence. The mean growth times and mean emittances are calculated and written in an output file every one `timestep` `TIMEINJ`.
 6. If `damping` and `q_ex` are both set to 1, the effects of synchrotron radiation damping and quantum excitation are taken into account.
@@ -103,8 +103,8 @@ The core of the performed calculations are the application of IBS kicks, which a
 
 1. Finds the limits of the distributions.
 2. The distributions are then split in cells (uniform split with respect to x, z and s coordinates).
-3. Macro particles are put in the determined cells and the program calculates the number of macro particles and their density in each cell.
-4. Scattering kicks are applied between macro particles in the same cell, for each cell (binary collisions) -> redistribution of phase space.
+3. macro-particles are put in the determined cells and the program calculates the number of macro-particles and their density in each cell.
+4. Scattering kicks are applied between macro-particles in the same cell, for each cell (binary collisions) -> redistribution of phase space.
 
 ### Application of fastrun
 
