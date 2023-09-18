@@ -467,7 +467,7 @@ int main(int narg, char *args[])
       {
 	printf("Turn number=%d\n",n);	  	
 	
-	for(i=0; i<npoints;i=i++)
+	for(i=0; i<npoints;i++)
 	{	
 	  if(IBSflag)
 	  {	
