@@ -101,7 +101,8 @@ int flag_def, flag_renorm;
 
 // BEGIN MAIN SUBROUTINE ///////////////////////////////////////////////////
 
-int main(int narg, char *args[]) {
+int main(int narg, char *args[])
+{
     clock_t start, end;
     start = clock();
     cout << "start = " << start << endl;
@@ -110,7 +111,8 @@ int main(int narg, char *args[]) {
     if (narg < 3) {
         printf("Not enough arguments.\n");
         exit(1);
-    } else {
+    }
+    else {
         flag2 = read_input(args[2]); // returns 0 if succesful 1 if not
         if (flag2) {
             printf("Error reading INPUT file\n");
@@ -164,13 +166,15 @@ int main(int narg, char *args[]) {
         if (flag) {
             printf("Error recurrences1\n");
             exit(2);
-        } else {
+        }
+        else {
             flag = recurrences2(); //  Second shortening of the lattice
 
             if (flag) {
                 printf("Error recurrences2\n");
                 exit(3);
-            } else {
+            }
+            else {
                 // Creates the new twiss file after the recurrences
                 foutput = fopen(twissname, "w");
                 fprintf(foutput, "s lrep len alphax betax nux alphaz betaz nuz dispx disp1x dispz disp1z nrep\n");
@@ -219,7 +223,8 @@ int main(int narg, char *args[]) {
         DTIME = T0;
         //    TIMEINJ=1.0*DTIME;	// Time step that adds a line in the output file
         nturns = 1;
-    } else {
+    }
+    else {
         if (checktime)
             TEMPO = nturnstostudy * T0;
 
@@ -252,7 +257,8 @@ int main(int narg, char *args[]) {
 
     if (continuation) {
         numpart = numpart1;
-    } else {
+    }
+    else {
         KINJ1 = 0;
     }
 
@@ -260,7 +266,8 @@ int main(int narg, char *args[]) {
 
     if (eqdeltas == 0) {
         invtune = delta / deltas; // Longitudinal invariant
-    } else {
+    }
+    else {
         invtune = eqdelta / eqdeltas;
     }
 
@@ -309,7 +316,8 @@ int main(int narg, char *args[]) {
     // If continuation then read the Growth rates from file
     if (continuation) {
         read_grates(grname);
-    } else {
+    }
+    else {
         foutput1 = fopen(grname, "w");
         //    fflush(foutput1);
         fclose(foutput1);
@@ -334,7 +342,8 @@ int main(int narg, char *args[]) {
                 fprintf(fdist, "%.9e, %.9e, %.9e, %.9e, %.9e, %.9e\n", ex1[cont], ez1[cont], es1[cont], phix1[cont], phiz1[cont], phis1[cont]);
             }
             fclose(fdist);
-        } else {
+        }
+        else {
             printf("Can not write file %s. Aborting... \n", distname);
             exit(1);
         }
@@ -533,7 +542,8 @@ int main(int narg, char *args[]) {
 
 // BEGIN RAN2 SUBROUTINE ////////////////////////////////////////////////////
 //* Random number generator
-double ran2(void) {
+double ran2(void)
+{
     int j;
     long k;
     float temp;
@@ -541,7 +551,8 @@ double ran2(void) {
     if (idum <= 0) {
         if (-(idum) < 1) {
             idum = 1;
-        } else {
+        }
+        else {
             idum = -idum;
         }
         idum2 = idum;
@@ -575,14 +586,16 @@ double ran2(void) {
     }
     if ((temp = AM * iy) > RNMX) {
         return RNMX;
-    } else {
+    }
+    else {
         return temp;
     }
 }
 // END RAN2 SUBROUTINE ////////////////////////////////////////////////////
 
 // BEGIN STRLWR SUBROUTINE //////////////////////////////////////////////////
-char *strlwr(char *str) {
+char *strlwr(char *str)
+{
     int k;
 
     for (k = 0; str[k]; k++) {
@@ -596,7 +609,8 @@ char *strlwr(char *str) {
 //  Reads madx twiss file with a certain format. Columns has to follow the ordering:
 //  name,s1,len1,betx1,alphax1,mux1,bety1,alphay1,muy1,dx1,dpx1,dy1,dpy1
 
-int read_madx(char *filemadx) {
+int read_madx(char *filemadx)
+{
     cout << "READING MADX" << endl;
 #define BUFFSIZE1 5001
 #define BUFFSIZE2 50000
@@ -990,17 +1004,20 @@ int read_madx(char *filemadx) {
         if (!(flagl)) {
             if (cont == 0) {
                 len2[cont] = 0;
-            } else {
+            }
+            else {
                 len2[cont] = s2[cont] - s2[cont - 1];
             }
         }
         if (!(flagmux)) {
             if (cont == 0) {
                 mux2[cont] = 0;
-            } else {
+            }
+            else {
                 if (betx2[cont - 1] > 0) {
                     mux2[cont] = mux2[cont - 1] + len2[cont] / betx2[cont - 1];
-                } else {
+                }
+                else {
                     mux2[cont] = mux2[cont - 1];
                 }
             }
@@ -1008,10 +1025,12 @@ int read_madx(char *filemadx) {
         if (!(flagmuy)) {
             if (cont == 0) {
                 muy2[cont] = 0;
-            } else {
+            }
+            else {
                 if (bety2[cont - 1] > 0) {
                     muy2[cont] = muy2[cont - 1] + len2[cont] / bety2[cont - 1];
-                } else {
+                }
+                else {
                     muy2[cont] = muy2[cont - 1];
                 }
                 // printf("cont=%d\n",cont);
@@ -1083,7 +1102,8 @@ int read_madx(char *filemadx) {
     for (i = 0; i < npoints; i++) {
         if (i < (npoints - 1)) {
             lrep[i] = len[i + 1];
-        } else {
+        }
+        else {
             lrep[i] = 0;
         }
     }
@@ -1094,7 +1114,8 @@ int read_madx(char *filemadx) {
 // END READ_MADX SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN READ_INPUT SUBROUTINE /////////////////////////////////////////////////////
-int read_input(char *fileinput) {
+int read_input(char *fileinput)
+{
     char *arr;
     unsigned int length;
 
@@ -1116,7 +1137,8 @@ int read_input(char *fileinput) {
     if (!input) {
         cout << "Unable to open parameter file" << endl;
         return 1;
-    } else
+    }
+    else
         cout << "Open parameter file successfully!" << endl;
     cout << "" << endl;
 
@@ -1144,7 +1166,8 @@ int read_input(char *fileinput) {
         cout << paramname.size() << endl;
         cout << "Not enough input arguments" << endl;
         return 1;
-    } else {
+    }
+    else {
 
         for (int ii = 0; ii < paramname.size(); ii++)
             params.push_back(atof(paramvalue[ii].c_str()));
@@ -1237,7 +1260,8 @@ int read_input(char *fileinput) {
 
 // BEGIN  READ_DISTRIB SUBROUTINE /////////////////////////////////////////////////////
 
-int read_distrib(char *filedist) {
+int read_distrib(char *filedist)
+{
     FILE *fdist;
     char name[200], buffer[5000], ch = ',', *str;
     char emitx1[300], emitz1[300], emits1[300], phasex1[300], phasez1[300], phases1[300];
@@ -1251,7 +1275,8 @@ int read_distrib(char *filedist) {
 
             if (feof(fdist)) {
                 break;
-            } else {
+            }
+            else {
                 npart += 1;
             }
         }
@@ -1278,7 +1303,8 @@ int read_distrib(char *filedist) {
                     if (str == NULL) {
                         printf("Error reading distribution file %s\n", filedist);
                         return 1;
-                    } else {
+                    }
+                    else {
                         lim1 = 0;
                         lim2 = str - buffer;
                         strncpy(emitx1, buffer + lim1, lim2 - lim1);
@@ -1293,7 +1319,8 @@ int read_distrib(char *filedist) {
                     if (str == NULL) {
                         printf("Error reading distribution file %s\n", filedist);
                         return 1;
-                    } else {
+                    }
+                    else {
                         lim2 = str - buffer;
                         strncpy(emitz1, buffer + lim1, lim2 - lim1);
                         ez1[cont] = atof(emitz1);
@@ -1307,7 +1334,8 @@ int read_distrib(char *filedist) {
                     if (str == NULL) {
                         printf("Error reading distribution file %s\n", filedist);
                         return 1;
-                    } else {
+                    }
+                    else {
                         lim2 = str - buffer;
                         strncpy(emits1, buffer + lim1, lim2 - lim1);
                         es1[cont] = atof(emits1);
@@ -1321,7 +1349,8 @@ int read_distrib(char *filedist) {
                     if (str == NULL) {
                         printf("Error reading distribution file %s\n", filedist);
                         return 1;
-                    } else {
+                    }
+                    else {
                         lim2 = str - buffer;
                         strncpy(phasex1, buffer + lim1, lim2 - lim1);
                         phix1[cont] = atof(phasex1);
@@ -1335,7 +1364,8 @@ int read_distrib(char *filedist) {
                     if (str == NULL) {
                         printf("Error reading distribution file %s\n", filedist);
                         return 1;
-                    } else {
+                    }
+                    else {
                         lim2 = str - buffer;
                         strncpy(phasez1, buffer + lim1, lim2 - lim1);
                         phiz1[cont] = atof(phasez1);
@@ -1362,7 +1392,8 @@ int read_distrib(char *filedist) {
         }
         // printf("Benino 3 \n");
         fclose(fdist);
-    } else {
+    }
+    else {
         printf("Error opening file %s\n", filedist);
         return 1;
     }
@@ -1373,7 +1404,8 @@ int read_distrib(char *filedist) {
 // END READ_DISTRIB SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN  READ_GRATES SUBROUTINE /////////////////////////////////////////////////////
-int read_grates(char *filerate) {
+int read_grates(char *filerate)
+{
     FILE *frates;
     char name[200], buffer[5000], ch = '\t', *str;
     char temp1[300], exm1[300], ezm1[300], esm1[300], grx1[300], grz1[300], grs1[300];
@@ -1394,7 +1426,8 @@ int read_grates(char *filerate) {
 
             if (feof(frates)) {
                 break;
-            } else {
+            }
+            else {
                 KINJ1 += 1;
             }
         }
@@ -1420,7 +1453,8 @@ int read_grates(char *filerate) {
                     if (str == NULL) {
                         printf("Error reading growth rates file %s\n", filerate);
                         return 1;
-                    } else {
+                    }
+                    else {
                         lim1 = 0;
                         lim2 = str - buffer;
                         strncpy(temp1, buffer + lim1, lim2 - lim1);
@@ -1437,7 +1471,8 @@ int read_grates(char *filerate) {
                     if (str == NULL) {
                         printf("Error reading distribution file %s\n", filerate);
                         return 1;
-                    } else {
+                    }
+                    else {
                         lim2 = str - buffer;
                         lim1 = lim2 + 1;
                         dati += 1;
@@ -1449,7 +1484,8 @@ int read_grates(char *filerate) {
                     if (str == NULL) {
                         printf("Error reading distribution file %s\n", filerate);
                         return 1;
-                    } else {
+                    }
+                    else {
                         lim2 = str - buffer;
                         strncpy(grx1, buffer + lim1, lim2 - lim1);
                         grx[cont] = atof(grx1);
@@ -1463,7 +1499,8 @@ int read_grates(char *filerate) {
                     if (str == NULL) {
                         printf("Error reading distribution file %s\n", filerate);
                         return 1;
-                    } else {
+                    }
+                    else {
                         lim2 = str - buffer;
                         strncpy(grz1, buffer + lim1, lim2 - lim1);
                         grz[cont] = atof(grz1);
@@ -1488,7 +1525,8 @@ int read_grates(char *filerate) {
             }
         }
         fclose(frates);
-    } else {
+    }
+    else {
         printf("Error opening file %s\n", filerate);
         return 1;
     }
@@ -1498,7 +1536,8 @@ int read_grates(char *filerate) {
 // END READ_GRATES SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN CHECK SUBROUTINE /////////////////////////////////////////////////////
-int check(int pos1, int pos2, double prec) {
+int check(int pos1, int pos2, double prec)
+{
     if (len[pos2] != 0) {
         if (fabs(len[pos1] / len[pos2] - 1.0) > prec) {
             printf("Error 1\n");
@@ -2226,7 +2265,8 @@ int recurrences2(void)
 ///////////////////////////////////////////////////
 // BEGIN RECURRENCES SUBROUTINE /////////////////////////////////////////////////////
 
-int recurrences(void) {
+int recurrences(void)
+{
     double *s3, *len3, *alphax3, *alphaz3, *betax3, *betaz3, *dispx3, *disp1x3, *dispz3, *disp1z3, *nux3, *nuz3, *lrep3;
     int *nrep3;
     int start = 1, start1, current = 2, current1, start2, flag = 1, flag1, flag2, cont, cont1, current3 = 1, current4;
@@ -2379,7 +2419,8 @@ int recurrences(void) {
                                 lrep3[current3 + cont] = lrep3[current3 + cont] + lrep[current4 + cont];
                             }
                             printf("Bene3\n");
-                        } else {
+                        }
+                        else {
                             current3 = current3 + current - start1;
                             start    = start1 + cont1 * (current - start1);
                             current  = start + 1;
@@ -2391,7 +2432,8 @@ int recurrences(void) {
 
             if (start1 >= (current - 1)) {
                 flag = 0;
-            } else {
+            }
+            else {
                 flag = 1;
                 start1++;
             }
@@ -2416,7 +2458,8 @@ int recurrences(void) {
             }
             npoints = current3 + npoints - start;
             flag    = 0;
-        } else {
+        }
+        else {
             flag = 1;
             current++;
         }
@@ -2491,7 +2534,8 @@ int recurrences(void) {
 
 // BEGIN RECURRENCES2 SUBROUTINE /////////////////////////////////////////////////////
 
-int recurrences2(void) {
+int recurrences2(void)
+{
     double *s3, *len3, *alphax3, *alphaz3, *betax3, *betaz3, *dispx3, *disp1x3, *dispz3, *disp1z3, *nux3, *nuz3, *lrep3;
     int *nrep3;
     int start = 1, start1, current = 2, current1, start2, flag = 1, flag1, flag2, cont, cont1, current3 = 1, current4;
@@ -2645,7 +2689,8 @@ int recurrences2(void) {
                                 lrep3[current3 + cont] = lrep3[current3 + cont] + lrep[current4 + cont];
                             }
                             printf("Bene3\n");
-                        } else {
+                        }
+                        else {
                             current3 = current3 + current - start1;
                             start    = start1 + cont1 * (current - start1);
                             current  = start + 1;
@@ -2657,7 +2702,8 @@ int recurrences2(void) {
 
             if (start1 >= (current - 1)) {
                 flag = 0;
-            } else {
+            }
+            else {
                 flag = 1;
                 start1++;
             }
@@ -2682,7 +2728,8 @@ int recurrences2(void) {
             }
             npoints = current3 + npoints - start;
             flag    = 0;
-        } else {
+        }
+        else {
             flag = 1;
             current++;
         }
@@ -2756,7 +2803,8 @@ int recurrences2(void) {
 // END RECURRENCES2 SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN INVTOMOM SUBROUTINE /////////////////////////////////////////////////////
-int invtomom(int i) {
+int invtomom(int i)
+{
     int cont;
     double prova;
     FILE *fcoord;
@@ -2796,7 +2844,8 @@ int invtomom(int i) {
 // END INVTOMOM SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN MOMTOINV SUBROUTINE /////////////////////////////////////////////////////
-int momtoinv(int i) {
+int momtoinv(int i)
+{
     int cont;
 
     ex   = (double *)malloc(numpart * sizeof(double));
@@ -2840,7 +2889,8 @@ int momtoinv(int i) {
 // END MOMTOINV SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN IBS SUBROUTINE /////////////////////////////////////////////////////
-int IBS(void) {
+int IBS(void)
+{
     FILE *fprova;
     double maxx, minx, maxz, minz, maxs, mins;
     //  double deltacell,deltacellx,deltacellz,deltacells;
@@ -2860,21 +2910,24 @@ int IBS(void) {
     for (cont = 1; cont < numpart; cont++) {
         if (x[cont] < minx) {
             minx = x[cont];
-        } else {
+        }
+        else {
             if (x[cont] > maxx) {
                 maxx = x[cont];
             }
         }
         if (z[cont] < minz) {
             minz = z[cont];
-        } else {
+        }
+        else {
             if (z[cont] > maxz) {
                 maxz = z[cont];
             }
         }
         if (deltasp[cont] < mins) {
             mins = deltasp[cont];
-        } else {
+        }
+        else {
             if (deltasp[cont] > maxs) {
                 maxs = deltasp[cont];
             }
@@ -2973,7 +3026,8 @@ int IBS(void) {
 
         if (ncollisions >= npart[cont2]) {
             ncolcel = limit1;
-        } else {
+        }
+        else {
             ncolcel = ncollisions;
         }
 
@@ -3033,7 +3087,8 @@ int IBS(void) {
 // END IBS SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN SCATTER SUBROUTINE /////////////////////////////////////////////////////
-int scatter(int part1, int part2, double dimp, double dens) {
+int scatter(int part1, int part2, double dimp, double dens)
+{
     double Deltapcmx, Deltapcmz, Deltapcms;
     double Deltapcmt, Deltapcmn;
     double Deltap1cmx, Deltap1cmz, Deltap1cms;
@@ -3075,7 +3130,8 @@ int scatter(int part1, int part2, double dimp, double dens) {
             Deltap1cmz =
                 (-Deltapcmz * oneminuscospsi + (sinpsi * cosphi * Deltapcmz * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmx) / Deltapcmt) / 2.0;
             Deltap1cms = (-Deltapcms * oneminuscospsi - sinpsi * cosphi * Deltapcmt) / 2.0 * gammap;
-        } else {
+        }
+        else {
             Deltap1cmx = Deltapcmn * sinpsi * cosphi / 2.0;
             Deltap1cmz = Deltapcmn * sinpsi * sinphi / 2.0;
             Deltap1cms = -Deltapcmn * oneminuscospsi / 2.0 * gammap;
