@@ -96,18 +96,15 @@ int IBS(void);
 int scatter(int part1, int part2, double dimp, double dens);
 int convkk = 0;
 int flag_def, flag_renorm;
-#include <time.h>
+
 
 // BEGIN MAIN SUBROUTINE ///////////////////////////////////////////////////
-
-int main(int narg, char *args[])
-{
+int main(int narg, char *args[]) {
     clock_t start, end;
     start = clock();
     cout << "start = " << start << endl;
 
     // BEGIN READING TWISS PARAMETERS FROM MADX FILE AND INPUT PARAMETERS FROM INPUT FILE
-
     if (narg < 3) {
         printf("Not enough arguments.\n");
         exit(1);
@@ -202,16 +199,13 @@ int main(int narg, char *args[])
         printf("Error, Circumference= %.9e m, S= %.9e\n", dummy, s[npoints - 1]);
         exit(4);
     }
-
     // END READING TWISS PARAMETERS FROM MADX AND INPUT PARAMETERS FROM INPUT FILE
 
     energy = sqrt(momentum * momentum + massparticle * massparticle);
     gammap = energy / massparticle;
     cout << "gamma = " << gammap << endl;
     beta = sqrt(1 - 1 / gammap / gammap);
-
     T0 = s[npoints - 1] / beta / cvel;
-
     circumference = s[npoints - 1];
     cout << "circumference = " << circumference << endl;
 
@@ -225,14 +219,10 @@ int main(int narg, char *args[])
     else {
         if (checktime)
             TEMPO = nturnstostudy * T0;
-
         DTIME = TEMPO / NIBSruns; // The number in the denominator, is the number of times the IBS force is calculated in the time TEMP0. DTIME should
                                   // be much smaller than the IBS growth time
                                   //    TIMEINJ=1.0*DTIME;	// Time step that adds a line in the output file
         NINJ = NIBSruns;          // Number of loops to run AND WRITE IN OUTPUT FILE
-
-        //    if(fastrun) nturns=1;
-        //    else
         nturns = (int)ceil(DTIME / T0); //(int)floor(TEMPO/T0); // Number of turns per timestep
 
         TIMEINJ = nturns * T0;
@@ -250,7 +240,6 @@ int main(int narg, char *args[])
     cout << "NIBSruns=" << NIBSruns << endl;
     cout << "Number of macroparticles=" << numpart << endl;
     cout << "T0 = " << T0 << endl;
-
     //////////////////////////////////////////////////////////////////////////////////////////
 
     if (continuation) {
@@ -272,7 +261,6 @@ int main(int narg, char *args[])
     idum = -time(0);
 
     // BEGIN generating distribution if not a continuation
-
     if (!(continuation)) {
         ex1   = (double *)malloc(numpart * sizeof(double));
         ez1   = (double *)malloc(numpart * sizeof(double));
@@ -284,8 +272,7 @@ int main(int narg, char *args[])
         // Generates distribution of macroparticles.
         // ran2(): Random number generation from 0-1 (uniform). Generation of half distribution to get always positive numbers.
         for (cont = 0; cont < numpart; cont++) {
-            ex1[cont] = -2 * epsx * log(1.0 - ran2()); // -2*exmean*log(1-ran2()) --> the factor of 2 is to go from emittance to action, log(1-ran2())
-                                                       // generates an exponential distribution
+            ex1[cont] = -2 * epsx * log(1.0 - ran2()); // -2*exmean*log(1-ran2()) --> the factor of 2 is to go from emittance to action, log(1-ran2()) generates an exponential distribution
             ez1[cont]   = -2 * epsz * log(1.0 - ran2());
             es1[cont]   = -(delta * delta + invtune * invtune * deltas * deltas) * log(1 - ran2()); // this is alsready in action
             phix1[cont] = 2 * pi * ran2();
@@ -293,11 +280,10 @@ int main(int narg, char *args[])
             phis1[cont] = 2 * pi * ran2();
         }
     }
-    // END GENERATION OF INVARIANTS AND PHASES
+    // END generating distribution if not continuation
 
     printf("nturns=%d\n", nturns);
     printf("npoints=%d\n", npoints);
-    //  printf("ninjruns=%d\n",ninjruns);
     printf("numpart=%d\n", numpart);
 
     temp = (double *)calloc(NINJ + 1, sizeof(double));
@@ -317,7 +303,6 @@ int main(int narg, char *args[])
     }
     else {
         foutput1 = fopen(grname, "w");
-        //    fflush(foutput1);
         fclose(foutput1);
     }
 
@@ -334,8 +319,6 @@ int main(int narg, char *args[])
         fdist = fopen(distname, "w");
 
         if (fdist != NULL) {
-            // fprintf(fdist,"%d,%d \n",KINJ,numpart);
-
             for (cont = 0; cont < numpart; cont++) {
                 fprintf(fdist, "%.9e, %.9e, %.9e, %.9e, %.9e, %.9e\n", ex1[cont], ez1[cont], es1[cont], phix1[cont], phiz1[cont], phis1[cont]);
             }
@@ -418,17 +401,14 @@ int main(int narg, char *args[])
                 }
             }
         }
-
         printf("Tutto ok 13\n");
-        // if not the last injection, track the distribution
+
+        // If not the last injection, track the distribution
         if (KINJ - NINJ) {
             cout << "KINJ = " << KINJ << endl;
 
-            for (n = 0; n < nturns; n++) // Loop in all turns in one timestep to calculate the emittance evolution and growth rate. The results are
-                                         // written in file in every timestep
-            {
+            for (n = 0; n < nturns; n++) {  // Loop in all turns in one timestep to calculate the emittance evolution and growth rate. The results are written in file in every timestep
                 printf("Turn number=%d\n", n);
-
                 for (i = 0; i < npoints; i++) {
                     if (IBSflag) {
                         if (renormbinningall == 1 || renormbinningtrans == 1) {
@@ -449,7 +429,6 @@ int main(int narg, char *args[])
                                 flag_renorm = 1;
                             }
                         }
-                        //	    cout << "flag_renorm = " << flag_renorm << "  flag_def = " << flag_def << endl;
 
                         flag = invtomom(i);
                         // deltat=lrep[i]/circumference*DTIME; // Original code of Alessandro
@@ -461,11 +440,9 @@ int main(int narg, char *args[])
                         flag = IBS();
                         flag = momtoinv(i);
 
-                        if (oneturn) // If oneturn write emittances in each lattice point
-                        {
+                        if (oneturn) {  // If oneturn write emittances in each lattice point
                             cout << "i = " << i << "/" << npoints << endl;
 
-                            //	      cout << "ncellx = " << ncellx << "  ncellz = " << ncellz << "  ncells = " << ncells << endl;
                             exmt[i] = 0;
                             ezmt[i] = 0;
                             esmt[i] = 0;
@@ -479,11 +456,7 @@ int main(int narg, char *args[])
                             exmt[i] /= (2 * numpart);
                             ezmt[i] /= (2 * numpart);
                             esmt[i] /= (numpart);
-                            //	      cout << "exmt/eymz = " << sqrt(betax[i]*exmt[i-1]/(betaz[i]*ezmt[i-1])) << endl;
 
-                            // femittances=fopen(emitname,"a");
-
-                            //	      if(oneturn) femittances=fopen(emitname,"a");
                             femittances = fopen(emitname, "a");
                             fprintf(femittances, "%.9e\t %.9e\t %.9e\t %.9e\t \n", s[i], exmt[i], ezmt[i], esmt[i]);
                             fflush(femittances);
@@ -494,8 +467,7 @@ int main(int narg, char *args[])
 
                 //  NEEDS TO BE CHECKED! THE RESULTS ARE NOT VALID USING THIS.
 
-                if (damping) // To take damping into account
-                {
+                if (damping) { // To take damping into account
                     for (comodo = 0; comodo < numpart; comodo++) {
                         ex[comodo] = 2 * eqx + (ex[comodo] - 2 * eqx) * exp(-DTIME / dtimex);
                         ez[comodo] = 2 * eqz + (ez[comodo] - 2 * eqz) * exp(-DTIME / dtimez);
@@ -503,8 +475,7 @@ int main(int narg, char *args[])
                     } // End of for loop in each macroparticle
                 }     // End of if(damping)
 
-                if (coupling != 0) // Take coupling into account (Simplified way, only for weak coupling)
-                {
+                if (coupling != 0)  {  // Take coupling into account (Simplified way, only for weak coupling)
                     for (comodo = 0; comodo < numpart; comodo++) {
                         ex[comodo] = ex[comodo] * (1 - coupling) + coupling * ez[comodo];
                         ez[comodo] = coupling * (ex[comodo] - coupling * ez[comodo]) / (1 - coupling) + (1 - coupling) * ez[comodo];
@@ -516,8 +487,7 @@ int main(int narg, char *args[])
 
             cout << "Write to file" << endl;
             foutput1 = fopen(grname, "a");
-            fprintf(foutput1, "%d\t %.9e\t %.9e\t %.9e\t %.9e\t %.9e\t %.9e\n", KINJ, exm[KINJ], ezm[KINJ], esm[KINJ], grx[KINJ], grz[KINJ],
-                    grs[KINJ]);
+            fprintf(foutput1, "%d\t %.9e\t %.9e\t %.9e\t %.9e\t %.9e\t %.9e\n", KINJ, exm[KINJ], ezm[KINJ], esm[KINJ], grx[KINJ], grz[KINJ], grs[KINJ]);
             fflush(foutput1);
             fclose(foutput1);
             printf("Tutto ok44! %d,%d,%d\n", n, i, flag);
@@ -528,20 +498,14 @@ int main(int narg, char *args[])
     printf("Tutto ok6! %d,%d,%d\n", n, i, flag);
 
     end = clock();
-    cout << "Time required for execution: " << (double)(end - start) / CLOCKS_PER_SEC << " seconds."
-         << "\n\n";
+    cout << "Time required for execution: " << (double)(end - start) / CLOCKS_PER_SEC << " seconds." << "\n\n";
     return 0;
-} // End of main
-
+}
 // END MAIN SUBROUTINE ////////////////////////////////////////////////////
-//**********************************************************************//
-
-// BEGIN SUBROUTINES *******************************************************//
 
 // BEGIN RAN2 SUBROUTINE ////////////////////////////////////////////////////
 //* Random number generator
-double ran2(void)
-{
+double ran2(void) {
     int j;
     long k;
     float temp;
@@ -566,16 +530,19 @@ double ran2(void)
         }
         iy = iv[0];
     }
+
     k    = idum / IQ1;
     idum = IA1 * (idum - k * IQ1) - k * IR1;
     if (idum < 0) {
         idum += IM1;
     }
+
     k     = idum2 / IQ2;
     idum2 = IA2 * (idum2 - k * IQ2) - k * IR2;
     if (idum2 < 0) {
         idum2 += IM2;
     }
+
     j     = iy / NDIV;
     iy    = iv[j] - idum2;
     iv[j] = idum;
@@ -592,27 +559,23 @@ double ran2(void)
 // END RAN2 SUBROUTINE ////////////////////////////////////////////////////
 
 // BEGIN STRLWR SUBROUTINE //////////////////////////////////////////////////
-char *strlwr(char *str)
-{
+char *strlwr(char *str) {
     int k;
-
     for (k = 0; str[k]; k++) {
         str[k] = tolower(str[k]);
     }
-
     return str;
 }
 // END STRLWR SUBROUTINE //////////////////////////////////////////////////
+
 // BEGIN READ_MADX SUBROUTINE /////////////////////////////////////////////////////
 //  Reads madx twiss file with a certain format. Columns has to follow the ordering:
 //  name,s1,len1,betx1,alphax1,mux1,bety1,alphay1,muy1,dx1,dpx1,dy1,dpy1
-
-int read_madx(char *filemadx)
-{
+int read_madx(char *filemadx) {
     cout << "READING MADX" << endl;
-#define BUFFSIZE1 5001
-#define BUFFSIZE2 50000
-#define INDEXIND 30
+    #define BUFFSIZE1 5001
+    #define BUFFSIZE2 50000
+    #define INDEXIND 30
 
     char name[200], *buffer, ch = ' ', *keyword, prebuffer[BUFFSIZE1];
     char s1[200], len1[200], betx1[200], alphax1[200], mux1[200], bety1[200], alphay1[200], muy1[200], x[200], px[200], y[200], py[200], dx1[200],
@@ -622,10 +585,6 @@ int read_madx(char *filemadx)
         muy2[BUFFSIZE2], dx2[BUFFSIZE2], dpx2[BUFFSIZE2], dy2[BUFFSIZE2], dpy2[BUFFSIZE2], k1l2[BUFFSIZE2], angle2[BUFFSIZE2];
     int cont, i, flag = 0, flagint = 0, flagstart = 0, linecount, linecount1 = 0, linecount2 = 0, linecount3 = 0, flagid, index[INDEXIND];
     int flagl = 0, flagmux = 0, flagmuy = 0, flagiden, flagok = 0, provatore;
-    /*
-      printf("\n");
-      printf(filemadx);
-      printf("\n"); */
 
     for (cont = 0; cont < INDEXIND; cont++) {
         index[cont] = 0;
@@ -637,19 +596,14 @@ int read_madx(char *filemadx)
         return 1;
     }
 
-    while (!feof(finput)) // feof is 1 when end-of-file, 0 when not end-of-file, WHILE IS TRUE WHEN DIFFERENT FROM 0
-    {
-        // printf("Valore di feof: %d\n",feof(finput));
-
+    while (!feof(finput)) { // feof is 1 when end-of-file, 0 when not end-of-file, WHILE IS TRUE WHEN DIFFERENT FROM 0
         fgets(prebuffer, BUFFSIZE1, finput);
 
         if (feof(finput)) {
             break;
         }
-        // buffer=(char *)malloc(strlen(prebuffer)+1);
-        // free(buffer);
+
         buffer = strlwr(prebuffer);
-        // printf("%s",buffer);
         if (!(strstr(buffer, "s") == NULL)) {
             flagstart = 1;
             if ((flagstart) && (strstr(buffer, "betx") == NULL)) {
@@ -678,50 +632,23 @@ int read_madx(char *filemadx)
             }
 
             if (flagstart) {
-                // printf("%s",buffer);
-                /*for(provatore=0;provatore<100;provatore++)
-                {
-                  //printf("buffer[%d]=%c\n",provatore,buffer[provatore]);
-                  }*/
                 linecount = 0;
                 flagid    = -1;
                 while (linecount < strlen(buffer)) {
                     flagid   = flagid + 1;
                     flagiden = 0;
                     while ((linecount < strlen(buffer)) && (isspace(buffer[linecount]))) {
-                        /*     if(linecount<50)
-                               {
-                                 printf("buffer[%d]=%c\n",linecount,buffer[linecount]);
-                               } */
+
                         linecount = linecount + 1;
-                        /*     if(linecount<50)
-                               {
-                                 printf("linecount1; linecount=%d\n",linecount);
-                               } */
-                    }
-                    // printf("beffer[%d]=%c\n",linecount,buffer[linecount]);
-                    linecount1 = linecount;
-                    // printf("linecount1=%d\n",linecount1);
-                    while ((linecount < strlen(buffer)) && (!(isspace(buffer[linecount])))) {
-                        /*	      if(linecount<50)
-                                        {
-                                          printf("%s",buffer);
-                                          printf("buffer[%d]=%c\n",linecount,buffer[linecount]);
-                                        }
-                        */
-                        linecount = linecount + 1;
-                        /*	      if(linecount<50)
-                                        {
-                                          printf("linecount2; linecount=%d\n",linecount);
-                                        } */
-                    }
+                        linecount1 = linecount;
+                        while ((linecount < strlen(buffer)) && (!(isspace(buffer[linecount])))) {
+                            linecount = linecount + 1;
+                        }
 
                     linecount2 = linecount;
-                    // printf("linecount2=%d\n",linecount2);
                     keyword = (char *)malloc(linecount2 - linecount1 + 1);
                     strncpy(keyword, buffer + linecount1, linecount2 - linecount1);
                     keyword[linecount2 - linecount1] = 0;
-                    // printf("%d,keyword=%s\n",strlen(keyword),keyword);
                     if (flagid) {
                         if (!(strcmp(keyword, "s"))) {
                             flagiden          = 1;
@@ -791,10 +718,6 @@ int read_madx(char *filemadx)
                     free(keyword);
                     flagok = 1;
                 }
-                /*for(i=0;i<INDEXIND;i++)
-                  {
-                  printf("index[%d]=%d\n",i,index[i]);
-                  }*/
             }
         }
 
@@ -815,8 +738,7 @@ int read_madx(char *filemadx)
                 keyword    = (char *)malloc(linecount2 - linecount1 + 1);
                 strncpy(keyword, buffer + linecount1, linecount2 - linecount1);
                 keyword[linecount2 - linecount1] = 0;
-                switch (index[flagid]) // if(!(index[flagid]==0)) //mettere switch
-                {
+                switch (index[flagid]) { // if(!(index[flagid]==0)) //mettere switch
                 case 1: {
                     s2[cont] = atof(keyword);
                     break;
@@ -881,14 +803,9 @@ int read_madx(char *filemadx)
                 flagid = flagid + 1;
             }
             cont = cont + 1;
-            // printf("Scritto!\n");
         }
-        // printf("%d,%s",strlen(buffer),buffer);
-        // free(buffer);
-        // printf("%s",buffer);
     }
     fclose(finput);
-    // printf("Tutto ok 1.3!\n");
 
     npoints = cont;
     printf("npoints=%d\n", npoints);
@@ -925,12 +842,9 @@ int read_madx(char *filemadx)
                 else {
                     muy2[cont] = muy2[cont - 1];
                 }
-                // printf("cont=%d\n",cont);
             }
         }
     }
-
-    // printf("Tutto ok 1.5!\n");
 
     s      = (double *)malloc(npoints * sizeof(double));
     len    = (double *)malloc(npoints * sizeof(double));
@@ -994,12 +908,11 @@ int read_madx(char *filemadx)
     cout << "END READING MADX" << endl;
     printf("npoints=%d\n", npoints);
     return 0;
-}
+}}
 // END READ_MADX SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN READ_INPUT SUBROUTINE /////////////////////////////////////////////////////
-int read_input(char *fileinput)
-{
+int read_input(char *fileinput) {
     char *arr;
     unsigned int length;
 
@@ -1035,8 +948,6 @@ int read_input(char *fileinput)
     }
 
     unsigned int vsize = v.size();
-    //  cout << "vsize = " << v.size() << endl;
-
     for (unsigned int jj = 0; jj < vsize; jj++) {
         if (jj == 0 || jj % 2 == 0)
             paramname.push_back(v[jj]);
@@ -1052,7 +963,6 @@ int read_input(char *fileinput)
         return 1;
     }
     else {
-
         for (int ii = 0; ii < paramname.size(); ii++)
             params.push_back(atof(paramvalue[ii].c_str()));
 
@@ -1143,9 +1053,7 @@ int read_input(char *fileinput)
 // END READ_INPUT SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN  READ_DISTRIB SUBROUTINE /////////////////////////////////////////////////////
-
-int read_distrib(char *filedist)
-{
+int read_distrib(char *filedist) {
     FILE *fdist;
     char name[200], buffer[5000], ch = ',', *str;
     char emitx1[300], emitz1[300], emits1[300], phasex1[300], phasez1[300], phases1[300];
@@ -1164,7 +1072,6 @@ int read_distrib(char *filedist)
                 npart += 1;
             }
         }
-        // printf("Benino 1 \n");
         ex1   = (double *)malloc(npart * sizeof(double));
         ez1   = (double *)malloc(npart * sizeof(double));
         es1   = (double *)malloc(npart * sizeof(double));
@@ -1173,15 +1080,11 @@ int read_distrib(char *filedist)
         phis1 = (double *)malloc(npart * sizeof(double));
 
         rewind(fdist);
-        // printf("Benino 2 \n");
         for (cont = 0; cont < npart; cont++) {
             fgets(buffer, sizeof(buffer) / sizeof(char), fdist);
-            // printf("cont= %d \n",cont);
-            // printf("%s",buffer);
             dati = 0;
             while (dati < 6) {
-                switch (dati) // if(!(index[flagid]==0)) //mettere switch
-                {
+                switch (dati) { // if(!(index[flagid]==0)) //mettere switch
                 case 0: {
                     str = strchr(buffer, ch);
                     if (str == NULL) {
@@ -1271,25 +1174,21 @@ int read_distrib(char *filedist)
                     dati += 1;
                 }
                 }
-                // printf("dati=%d \n",dati);
             }
         }
-        // printf("Benino 3 \n");
         fclose(fdist);
     }
     else {
         printf("Error opening file %s\n", filedist);
         return 1;
     }
-    // KINJ1=nturn;
     numpart1 = npart;
     return 0;
 }
 // END READ_DISTRIB SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN  READ_GRATES SUBROUTINE /////////////////////////////////////////////////////
-int read_grates(char *filerate)
-{
+int read_grates(char *filerate) {
     FILE *frates;
     char name[200], buffer[5000], ch = '\t', *str;
     char temp1[300], exm1[300], ezm1[300], esm1[300], grx1[300], grz1[300], grs1[300];
@@ -1297,12 +1196,8 @@ int read_grates(char *filerate)
     frates = fopen(filerate, "r");
 
     if (frates) {
-        // printf("bene2\n");
         while (!feof(frates)) {
-            // printf("Valore di feof: %d\n",feof(finput));
-
             fgets(buffer, sizeof(buffer) / sizeof(char), frates);
-
             if (feof(frates)) {
                 break;
             }
@@ -1315,11 +1210,9 @@ int read_grates(char *filerate)
 
         for (cont = 0; cont < KINJ1; cont++) {
             fgets(buffer, sizeof(buffer) / sizeof(char), frates);
-            // printf("%s",buffer);
             dati = 0;
             while (dati < 6) {
-                switch (dati) // if(!(index[flagid]==0)) //mettere switch
-                {
+                switch (dati) {// if(!(index[flagid]==0)) //mettere switch
                 case 0: {
                     str = strchr(buffer, ch);
                     if (str == NULL) {
@@ -1404,12 +1297,10 @@ int read_grates(char *filerate)
     }
     return 0;
 }
-
 // END READ_GRATES SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN CHECK SUBROUTINE /////////////////////////////////////////////////////
-int check(int pos1, int pos2, double prec)
-{
+int check(int pos1, int pos2, double prec) {
     if (len[pos2] != 0) {
         if (fabs(len[pos1] / len[pos2] - 1.0) > prec) {
             printf("Error 1\n");
@@ -1465,11 +1356,8 @@ int check(int pos1, int pos2, double prec)
 }
 // END CHECK SUBROUTINE /////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////
 // BEGIN RECURRENCES SUBROUTINE /////////////////////////////////////////////////////
-
-int recurrences(void)
-{
+int recurrences(void) {
     double *s3, *len3, *alphax3, *alphaz3, *betax3, *betaz3, *dispx3, *disp1x3, *dispz3, *disp1z3, *nux3, *nuz3, *lrep3;
     int *nrep3;
     int start = 1, start1, current = 2, current1, start2, flag = 1, flag1, flag2, cont, cont1, current3 = 1, current4;
@@ -1732,13 +1620,10 @@ int recurrences(void)
 
     return 0;
 }
-
 // END RECURRENCES SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN RECURRENCES2 SUBROUTINE /////////////////////////////////////////////////////
-
-int recurrences2(void)
-{
+int recurrences2(void) {
     double *s3, *len3, *alphax3, *alphaz3, *betax3, *betaz3, *dispx3, *disp1x3, *dispz3, *disp1z3, *nux3, *nuz3, *lrep3;
     int *nrep3;
     int start = 1, start1, current = 2, current1, start2, flag = 1, flag1, flag2, cont, cont1, current3 = 1, current4;
@@ -2002,12 +1887,11 @@ int recurrences2(void)
 
     return 0;
 }
-
 // END RECURRENCES2 SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN INVTOMOM SUBROUTINE /////////////////////////////////////////////////////
-int invtomom(int i)
-{
+// Convert from invariants to momenta?
+int invtomom(int i) {
     int cont;
     double prova;
     FILE *fcoord;
@@ -2026,7 +1910,6 @@ int invtomom(int i)
         phix[cont] = 2.0 * pi * ran2();
         phiz[cont] = 2.0 * pi * ran2();
         phis[cont] = 2.0 * pi * ran2();
-        //  double *x,*xp,*z,*zp,*deltasp,*deltap
         deltap[cont]  = sqrt(es[cont]) * cos(phis[cont]);
         deltasp[cont] = sqrt(es[cont]) * sin(phis[cont]) / invtune;
         x[cont]       = sqrt(ex[cont] * betax[i]) * cos(phix[cont]) + dispx[i] * deltap[cont];
@@ -2047,8 +1930,8 @@ int invtomom(int i)
 // END INVTOMOM SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN MOMTOINV SUBROUTINE /////////////////////////////////////////////////////
-int momtoinv(int i)
-{
+// Convert from momenta to invariants?
+int momtoinv(int i) {
     int cont;
 
     ex   = (double *)malloc(numpart * sizeof(double));
@@ -2092,11 +1975,9 @@ int momtoinv(int i)
 // END MOMTOINV SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN IBS SUBROUTINE /////////////////////////////////////////////////////
-int IBS(void)
-{
+int IBS(void) {
     FILE *fprova;
     double maxx, minx, maxz, minz, maxs, mins;
-    //  double deltacell,deltacellx,deltacellz,deltacells;
     double density, totx, totz, tots;
     int cont, cont2, nump, scatterflag, dummy, dummy1, dummy2;
     int *cell, *npart, **part, *ncol;
@@ -2138,7 +2019,6 @@ int IBS(void)
     }
 
     // Sets a cut on the minimum and maximum of the distribution of macroparticles (??)
-
     maxx = maxx * 1.0001;
     minx = minx * 1.0001;
     maxz = maxz * 1.0001;
@@ -2157,7 +2037,6 @@ int IBS(void)
     // to take into account of interactions with close encounters.
     // We are interested only in binary collisions due to charge. The further distance encounters will contribute to space charge, not the IBS
 
-    //  cout << "flag_def = " << flag_def << endl;
     if (flag_def == 1) {
         deltacellx = totx / ncellx;
         deltacellz = totz / ncellz;
@@ -2168,8 +2047,6 @@ int IBS(void)
         ncellz = ceil(totz / deltacellz);
         ncells = ceil(tots / deltacells);
     }
-
-    //  cout << "ncellx = " << ncellx << "   ncellz = " << ncellz << " ncells = " << ncells << endl;
 
     if (ncellx >= 1000) {
         ncellx     = 999;
@@ -2192,14 +2069,13 @@ int IBS(void)
     ncelltot = ncellt * ncells;
 
     // BEGIN GROUPING PARTICLES IN CELLS
-
     cell  = (int *)malloc(numpart * sizeof(int));
     npart = (int *)calloc(ncelltot, sizeof(int));
     part  = (int **)malloc(ncelltot * sizeof(int *));
 
     for (cont = 0; cont < numpart; cont++) {
-        // characteristic integer for each macroparticle. Macroparticles in the same cell will have the same integer (I think this based on a PIC
-        // (particles-in-cell) algorithmo (???) )
+        // characteristic integer for each macroparticle. Macroparticles in the same cell will have the same integer
+        // (I think this based on a PIC algorithm???)
         cell[cont] = ((int)floor((deltasp[cont] - mins) / deltacells)) * ncellt + ((int)floor((z[cont] - minz) / deltacellz)) * ncellx +
                      ((int)floor((x[cont] - minx) / deltacellx));
         npart[cell[cont]]++; // counts the number of macroparticles with the same integer
@@ -2210,23 +2086,18 @@ int IBS(void)
     }
 
     free(npart);
-
     npart = (int *)calloc(ncelltot, sizeof(int)); // calloc is used to set memory to zero
-
     fflush(stdout);
 
     for (cont = 0; cont < numpart; cont++) {
         part[cell[cont]][npart[cell[cont]]] = cont; // identity of the particle in the cell "cell" with number of particles "npart"
         npart[cell[cont]]++;                        // macro-particles per cell (it is used later for the definition of density)
     }
-
     // END GROUPING PARTICLES IN CELLS
 
     // BEGIN SHUFFLING & SCATTERING OF PARTICLES IN EACH CELL
-
     for (cont2 = 0; cont2 < ncelltot; cont2++) {
         limit1 = npart[cont2] - 1;
-
         if (ncollisions >= npart[cont2]) {
             ncolcel = limit1;
         }
@@ -2236,7 +2107,6 @@ int IBS(void)
 
         ncol    = (int *)calloc(npart[cont2], sizeof(int));
         density = npart[cont2] * realn / deltacellx / deltacellz / deltacells / ncolcel; // cell density
-
         limit2 = limit1;
 
         while (limit1 > 0) {
@@ -2252,7 +2122,7 @@ int IBS(void)
                 dummy  = (int)floor(ran2() * limit2);
                 dummy2 = part[cont2][dummy];
 
-                scatterflag = scatter(dummy1, dummy2, totz, density);
+                scatterflag = scatter(dummy1, dummy2, totz, density);  // The scatter function takes care of computing the kick and spreading momenta
 
                 limit2--;
                 comodino            = ncol[dummy] + 1;
@@ -2278,7 +2148,6 @@ int IBS(void)
         free(ncol);
         free(part[cont2]);
     }
-
     // END SHUFFLING & SCATTERING OF PARTICLES IN EACH CELL
 
     free(npart);
@@ -2290,8 +2159,7 @@ int IBS(void)
 // END IBS SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN SCATTER SUBROUTINE /////////////////////////////////////////////////////
-int scatter(int part1, int part2, double dimp, double dens)
-{
+int scatter(int part1, int part2, double dimp, double dens) {
     double Deltapcmx, Deltapcmz, Deltapcms;
     double Deltapcmt, Deltapcmn;
     double Deltap1cmx, Deltap1cmz, Deltap1cms;
@@ -2304,34 +2172,23 @@ int scatter(int part1, int part2, double dimp, double dens)
     Deltapcmz = zp[part1] - zp[part2];
     Deltapcms = (deltap[part1] - deltap[part2]) / gammap;
     Deltapcmt = sqrt(Deltapcmx * Deltapcmx + Deltapcmz * Deltapcmz);
-
     Deltapcmn = sqrt(Deltapcmt * Deltapcmt + Deltapcms * Deltapcms);
 
     Phi    = 2 * pi * ran2(); // The polar collision angle chosen randomly
     cosphi = cos(Phi);
     sinphi = sin(Phi);
-
     betatilda = beta * gammap / 2.0 * Deltapcmn;
-
     coulomb = dimp * betatilda * betatilda / radius;
 
     if (coulomb > 1) {
         coulomb = log(coulomb);
-        // Psi=sqpi*radius/gammap*sqrt(cvel*coulomb*dens*deltat/betatilda/betatilda/betatilda);
-
         oneminuscospsi = twopicvel * dens * radius * radius * deltat * coulomb / gammap / gammap / betatilda / betatilda / betatilda;
-        // cospsi=cos(Psi);
-        // sinpsi=sin(Psi);
         sinpsi = sq2 * sqrt(oneminuscospsi); // The azimuthal collision angle
         // Assuming Rutherford scattering, an effective scattering angle is computed (statistical effect)
         // The change in momentum will then be calculated based on this effective angle
-
-        if (Deltapcmt) {
-            // Total momentum change
-            Deltap1cmx =
-                (-Deltapcmx * oneminuscospsi + (sinpsi * cosphi * Deltapcmx * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmz) / Deltapcmt) / 2.0;
-            Deltap1cmz =
-                (-Deltapcmz * oneminuscospsi + (sinpsi * cosphi * Deltapcmz * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmx) / Deltapcmt) / 2.0;
+        if (Deltapcmt) { // Total momentum change
+            Deltap1cmx = (-Deltapcmx * oneminuscospsi + (sinpsi * cosphi * Deltapcmx * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmz) / Deltapcmt) / 2.0;
+            Deltap1cmz = (-Deltapcmz * oneminuscospsi + (sinpsi * cosphi * Deltapcmz * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmx) / Deltapcmt) / 2.0;
             Deltap1cms = (-Deltapcms * oneminuscospsi - sinpsi * cosphi * Deltapcmt) / 2.0 * gammap;
         }
         else {
