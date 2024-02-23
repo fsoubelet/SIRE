@@ -69,8 +69,7 @@ char *twissnam      = "_TWISS_";
 char *dummystring, *dummyext, *distrfile;
 long idum2 = 123456789, iy = 0, iv[NTAB], idum;
 double *exm, *ezm, *esm, *exmt, *ezmt, *esmt, *grx, *grz, *grs, *temp, *grxp, *grzp, *grsp;
-int NINJ, KINJ, damping, IBSflag, KINJ1, numpart1, q_ex, flag_rec, convsteadystate = 0, fastrun = 0, renormbinningtrans = 1, renormbinningall = 1,
-                                                                   mppercell = 5; //,ninjruns=1;
+int NINJ, KINJ, damping, IBSflag, KINJ1, numpart1, q_ex, flag_rec, convsteadystate = 0, fastrun = 0, renormbinningtrans = 1, renormbinningall = 1, mppercell = 5; //,ninjruns=1;
 int nturnstostudy, checktime = 0;
 double TIMEINJ, DTIME, circumference, coupling;
 double dtimex, dtimez, dtimes, eqx, eqz, eqs, eqdelta, eqdeltas, qex1, qex2, qez1, qez2, qes1, qes2, rsq, fac, ratio;
