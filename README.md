@@ -18,13 +18,15 @@ The beam distribution is updated and the rms beam emittances are recomputed, giv
 
 ## How to Compile and Run the Code
 
-1. Compile the code with, for instance, `gcc`: `g++ sire.c -o sire`. The same would be done with a different compiler by changing the invoked executable (for instance `g++` -> `clang++`).
+1. Compile the code with, for instance, `gcc`: `g++ sire.cpp -o sire`. The same would be done with a different compiler by changing the invoked executable (for instance `g++` -> `clang++`).
 2. Run the code, providing a TWISS file (e.g. from `MAD-X`), a parameters file and a target for the outputs:
+
 ```bash
 ./sire twiss.tfs params_file.dat outputfiles_naming
 ```
 
 A fourth argument may be provided, in which case it is assumed to be the input distribution:
+
 ```bash
 ./sire twiss.tfs params_file.dat outputfiles_naming distribution.txt
 ```
@@ -34,6 +36,7 @@ The specifications for the various arguments are as follows:
 1. The `MAD-X` TWISS file needs columns ordered and named: `name,s1,len1,betx1,alphax1,mux1,bety1,alphay1,muy1,dx1,dpx1,dy1,dpy1`. I personally recommend using our [tfs-pandas](https://github.com/pylhc/tfs) package to work with your `TFS` file, should you need to in order to get the proper input.
 
 2. The input parameters file needs the following fields:
+
 ```txt
 TEMPO:           The full time length of the simulation.
 nturnstostudy:   The total number of turns.
@@ -69,7 +72,8 @@ convsteadystate: Track until convergeance to steady-state not in full TEMPO time
 checktime:       A boolean integer, 0 if you want to see the TEMPO, 1 to see the turns instead of the TEMPO.
 ```
 
-One may wish to modify the following in the `SIRE` code itself (`sire.c`):
+One may wish to modify the following in the `SIRE` code itself (`sire.cpp`):
+
 ```txt
 precision:              Determines how the recurrences work: elements of the lattice with twiss functions differing of less than precision % are considered equal. The closer it is to 1 -> more recurrences -> shorter lattice -> less computation time but also less accuracy. The closer it is to 0 -> less recurrences -> higher accuracy.
 renormbinningtrans(=1): A boolean integer. If set to 1, sees ncellx as f(ncells) using the mppercell value.
@@ -78,6 +82,7 @@ mppercell(=5):          The number of macro-particles per cell. Determines the n
 ```
 
 3. The output files are named based on the third provided argument:
+
 ```txt
 RES_TWISS_arg3.txt:        The new twiss file after recurrences.
 RES_EMITTANCE_arg3.txt:    The emittance at each point of the lattice after the IBS kicks (for 1-turn calculations only). This contains four columns: s, exm, ezm and esm.
@@ -113,7 +118,7 @@ When setting `fastrun=1` and a value for `NIBSruns` in the parameter file one ca
 When done so, the following modifications are made:
 
 1. The IBS is applied in one turn and the growth rate per particle is calculated.
-2. The emittance per particle is re-calculated based on the exponential IBS growth in a time step `TIMEINJ`, calculated from the `NIBSruns` and `TEMPO` values. 
+2. The emittance per particle is re-calculated based on the exponential IBS growth in a time step `TIMEINJ`, calculated from the `NIBSruns` and `TEMPO` values.
 3. Tracking continues with the interpolated distribution.
 
 <details>
