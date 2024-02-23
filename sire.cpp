@@ -47,7 +47,13 @@
 #define chargep 1
 #define chargee 1
 
-using namespace std;
+using std::cout;
+using std::cin;
+using std::endl;
+using std::string;
+using std::ifstream;
+using std::vector;
+using std::ios;
 
 FILE *finput, *foutput, *foutput1, *finput1, *femittances, *fdist;
 
