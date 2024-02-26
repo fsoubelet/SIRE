@@ -47,13 +47,13 @@
 #define chargep 1
 #define chargee 1
 
-using std::cout;
 using std::cin;
+using std::cout;
 using std::endl;
-using std::string;
 using std::ifstream;
-using std::vector;
 using std::ios;
+using std::string;
+using std::vector;
 
 FILE *finput, *foutput, *foutput1, *finput1, *femittances, *fdist;
 
@@ -75,7 +75,8 @@ char const *twissnam      = "_TWISS_";
 char *dummystring, *dummyext, *distrfile;
 long idum2 = 123456789, iy = 0, iv[NTAB], idum;
 double *exm, *ezm, *esm, *exmt, *ezmt, *esmt, *grx, *grz, *grs, *temp, *grxp, *grzp, *grsp;
-int NINJ, KINJ, damping, IBSflag, KINJ1, numpart1, q_ex, flag_rec, convsteadystate = 0, fastrun = 0, renormbinningtrans = 1, renormbinningall = 1, mppercell = 5; //,ninjruns=1;
+int NINJ, KINJ, damping, IBSflag, KINJ1, numpart1, q_ex, flag_rec, convsteadystate = 0, fastrun = 0, renormbinningtrans = 1, renormbinningall = 1,
+                                                                   mppercell = 5; //,ninjruns=1;
 int nturnstostudy, checktime = 0;
 double TIMEINJ, DTIME, circumference, coupling;
 double dtimex, dtimez, dtimes, eqx, eqz, eqs, eqdelta, eqdeltas, qex1, qex2, qez1, qez2, qes1, qes2, rsq, fac, ratio;
@@ -102,9 +103,9 @@ int scatter(int part1, int part2, double dimp, double dens);
 int convkk = 0;
 int flag_def, flag_renorm;
 
-
 // BEGIN MAIN SUBROUTINE ///////////////////////////////////////////////////
-int main(int narg, char *args[]) {
+int main(int narg, char *args[])
+{
     clock_t start, end;
     start = clock();
     cout << "start = " << start << endl;
@@ -194,7 +195,7 @@ int main(int narg, char *args[]) {
 
     // Loop in all lattice elements
     for (cont = 0; cont < npoints; cont++) {
-        dummy += lrep[cont];
+        dummy += lrep[cont]; // dummy containts the new lattice length
     }
 
     printf("Circumference= %.9e m, S= %.9e m\n", dummy, s[npoints - 1]);
@@ -209,8 +210,8 @@ int main(int narg, char *args[]) {
     energy = sqrt(momentum * momentum + massparticle * massparticle);
     gammap = energy / massparticle;
     cout << "gamma = " << gammap << endl;
-    beta = sqrt(1 - 1 / gammap / gammap);
-    T0 = s[npoints - 1] / beta / cvel;
+    beta          = sqrt(1 - 1 / gammap / gammap);
+    T0            = s[npoints - 1] / beta / cvel;
     circumference = s[npoints - 1];
     cout << "circumference = " << circumference << endl;
 
@@ -227,16 +228,16 @@ int main(int narg, char *args[]) {
         DTIME = TEMPO / NIBSruns; // The number in the denominator, is the number of times the IBS force is calculated in the time TEMP0. DTIME should
                                   // be much smaller than the IBS growth time
                                   //    TIMEINJ=1.0*DTIME;	// Time step that adds a line in the output file
-        NINJ = NIBSruns;          // Number of loops to run AND WRITE IN OUTPUT FILE
+        NINJ   = NIBSruns;        // Number of loops to run AND WRITE IN OUTPUT FILE
         nturns = (int)ceil(DTIME / T0); //(int)floor(TEMPO/T0); // Number of turns per timestep
 
         TIMEINJ = nturns * T0;
     }
 
+    // Display some of the parameters to the command line
     cout << "fastrun=" << fastrun << endl;
     cout << "checktime=" << checktime << endl;
     cout << "convsteadystate=" << convsteadystate << endl;
-
     cout << "Total run time (TEMPO) = " << TEMPO << endl;
     cout << "Time interval of print = " << DTIME << endl;
     cout << "NINJ = " << NINJ << endl;
@@ -245,7 +246,6 @@ int main(int narg, char *args[]) {
     cout << "NIBSruns=" << NIBSruns << endl;
     cout << "Number of macroparticles=" << numpart << endl;
     cout << "T0 = " << T0 << endl;
-    //////////////////////////////////////////////////////////////////////////////////////////
 
     if (continuation) {
         numpart = numpart1;
@@ -263,7 +263,7 @@ int main(int narg, char *args[]) {
         invtune = eqdelta / eqdeltas;
     }
 
-    idum = -time(0);
+    idum = -time(0); // no idea?
 
     // BEGIN generating distribution if not a continuation
     if (!(continuation)) {
@@ -277,7 +277,8 @@ int main(int narg, char *args[]) {
         // Generates distribution of macroparticles.
         // ran2(): Random number generation from 0-1 (uniform). Generation of half distribution to get always positive numbers.
         for (cont = 0; cont < numpart; cont++) {
-            ex1[cont] = -2 * epsx * log(1.0 - ran2()); // -2*exmean*log(1-ran2()) --> the factor of 2 is to go from emittance to action, log(1-ran2()) generates an exponential distribution
+            ex1[cont] = -2 * epsx * log(1.0 - ran2()); // -2*exmean*log(1-ran2()) --> the factor of 2 is to go from emittance to action, log(1-ran2())
+                                                       // generates an exponential distribution
             ez1[cont]   = -2 * epsz * log(1.0 - ran2());
             es1[cont]   = -(delta * delta + invtune * invtune * deltas * deltas) * log(1 - ran2()); // this is alsready in action
             phix1[cont] = 2 * pi * ran2();
@@ -312,7 +313,6 @@ int main(int narg, char *args[]) {
     }
 
     npoints--;
-
     if (s[npoints - 1] == s[npoints - 2]) {
         npoints--;
     }
@@ -320,9 +320,9 @@ int main(int narg, char *args[]) {
     printf("Tutto ok 1\n");
     fflush(stdout);
 
+    // If we have generated the distribution, write it to file
     if (!(continuation)) {
         fdist = fopen(distname, "w");
-
         if (fdist != NULL) {
             for (cont = 0; cont < numpart; cont++) {
                 fprintf(fdist, "%.9e, %.9e, %.9e, %.9e, %.9e, %.9e\n", ex1[cont], ez1[cont], es1[cont], phix1[cont], phiz1[cont], phis1[cont]);
@@ -335,13 +335,14 @@ int main(int narg, char *args[]) {
         }
     }
 
+    // Allocate some space for arrays that will be used in the main loop
     ex   = (double *)malloc(numpart * sizeof(double));
     ez   = (double *)malloc(numpart * sizeof(double));
     es   = (double *)malloc(numpart * sizeof(double));
     phix = (double *)malloc(numpart * sizeof(double));
     phiz = (double *)malloc(numpart * sizeof(double));
     phis = (double *)malloc(numpart * sizeof(double));
-
+    // And populate these with the existing values from the distribution
     for (cont = 0; cont < numpart; cont++) {
         ex[cont]   = ex1[cont];
         ez[cont]   = ez1[cont];
@@ -412,7 +413,9 @@ int main(int narg, char *args[]) {
         if (KINJ - NINJ) {
             cout << "KINJ = " << KINJ << endl;
 
-            for (n = 0; n < nturns; n++) {  // Loop in all turns in one timestep to calculate the emittance evolution and growth rate. The results are written in file in every timestep
+            // Loop in all turns in one timestep to calculate the emittance evolution and growth rate.
+            // The results are written in file in every timestep
+            for (n = 0; n < nturns; n++) {
                 printf("Turn number=%d\n", n);
                 for (i = 0; i < npoints; i++) {
                     if (IBSflag) {
@@ -445,7 +448,7 @@ int main(int narg, char *args[]) {
                         flag = IBS();
                         flag = momtoinv(i);
 
-                        if (oneturn) {  // If oneturn write emittances in each lattice point
+                        if (oneturn) { // If oneturn write emittances in each lattice point
                             cout << "i = " << i << "/" << npoints << endl;
 
                             exmt[i] = 0;
@@ -480,7 +483,7 @@ int main(int narg, char *args[]) {
                     } // End of for loop in each macroparticle
                 }     // End of if(damping)
 
-                if (coupling != 0)  {  // Take coupling into account (Simplified way, only for weak coupling)
+                if (coupling != 0) { // Take coupling into account (Simplified way, only for weak coupling)
                     for (comodo = 0; comodo < numpart; comodo++) {
                         ex[comodo] = ex[comodo] * (1 - coupling) + coupling * ez[comodo];
                         ez[comodo] = coupling * (ex[comodo] - coupling * ez[comodo]) / (1 - coupling) + (1 - coupling) * ez[comodo];
@@ -492,7 +495,8 @@ int main(int narg, char *args[]) {
 
             cout << "Write to file" << endl;
             foutput1 = fopen(grname, "a");
-            fprintf(foutput1, "%d\t %.9e\t %.9e\t %.9e\t %.9e\t %.9e\t %.9e\n", KINJ, exm[KINJ], ezm[KINJ], esm[KINJ], grx[KINJ], grz[KINJ], grs[KINJ]);
+            fprintf(foutput1, "%d\t %.9e\t %.9e\t %.9e\t %.9e\t %.9e\t %.9e\n", KINJ, exm[KINJ], ezm[KINJ], esm[KINJ], grx[KINJ], grz[KINJ],
+                    grs[KINJ]);
             fflush(foutput1);
             fclose(foutput1);
             printf("Tutto ok44! %d,%d,%d\n", n, i, flag);
@@ -503,14 +507,16 @@ int main(int narg, char *args[]) {
     printf("Tutto ok6! %d,%d,%d\n", n, i, flag);
 
     end = clock();
-    cout << "Time required for execution: " << (double)(end - start) / CLOCKS_PER_SEC << " seconds." << "\n\n";
+    cout << "Time required for execution: " << (double)(end - start) / CLOCKS_PER_SEC << " seconds."
+         << "\n\n";
     return 0;
 }
 // END MAIN SUBROUTINE ////////////////////////////////////////////////////
 
 // BEGIN RAN2 SUBROUTINE ////////////////////////////////////////////////////
 //* Random number generator
-double ran2(void) {
+double ran2(void)
+{
     int j;
     long k;
     float temp;
@@ -564,7 +570,8 @@ double ran2(void) {
 // END RAN2 SUBROUTINE ////////////////////////////////////////////////////
 
 // BEGIN STRLWR SUBROUTINE //////////////////////////////////////////////////
-char *strlwr(char *str) {
+char *strlwr(char *str)
+{
     int k;
     for (k = 0; str[k]; k++) {
         str[k] = tolower(str[k]);
@@ -576,11 +583,12 @@ char *strlwr(char *str) {
 // BEGIN READ_MADX SUBROUTINE /////////////////////////////////////////////////////
 //  Reads madx twiss file with a certain format. Columns has to follow the ordering:
 //  name,s1,len1,betx1,alphax1,mux1,bety1,alphay1,muy1,dx1,dpx1,dy1,dpy1
-int read_madx(char *filemadx) {
+int read_madx(char *filemadx)
+{
     cout << "READING MADX" << endl;
-    #define BUFFSIZE1 5001
-    #define BUFFSIZE2 50000
-    #define INDEXIND 30
+#define BUFFSIZE1 5001
+#define BUFFSIZE2 50000
+#define INDEXIND 30
 
     char name[200], *buffer, ch = ' ', *keyword, prebuffer[BUFFSIZE1];
     char s1[200], len1[200], betx1[200], alphax1[200], mux1[200], bety1[200], alphay1[200], muy1[200], x[200], px[200], y[200], py[200], dx1[200],
@@ -644,280 +652,282 @@ int read_madx(char *filemadx) {
                     flagiden = 0;
                     while ((linecount < strlen(buffer)) && (isspace(buffer[linecount]))) {
 
-                        linecount = linecount + 1;
+                        linecount  = linecount + 1;
                         linecount1 = linecount;
                         while ((linecount < strlen(buffer)) && (!(isspace(buffer[linecount])))) {
                             linecount = linecount + 1;
                         }
 
+                        linecount2 = linecount;
+                        keyword    = (char *)malloc(linecount2 - linecount1 + 1);
+                        strncpy(keyword, buffer + linecount1, linecount2 - linecount1);
+                        keyword[linecount2 - linecount1] = 0;
+                        if (flagid) {
+                            if (!(strcmp(keyword, "s"))) {
+                                flagiden          = 1;
+                                index[flagid - 1] = 1;
+                            }
+                            if (!(strcmp(keyword, "l"))) {
+                                flagl             = 1;
+                                flagiden          = 1;
+                                index[flagid - 1] = 2;
+                            }
+                            if (!(strcmp(keyword, "betx"))) {
+                                flagiden          = 1;
+                                index[flagid - 1] = 3;
+                            }
+                            if (!(strcmp(keyword, "alfx"))) {
+                                flagiden          = 1;
+                                index[flagid - 1] = 4;
+                            }
+                            if (!(strcmp(keyword, "mux"))) {
+                                flagmux           = 1;
+                                flagiden          = 1;
+                                index[flagid - 1] = 5;
+                            }
+                            if (!(strcmp(keyword, "bety"))) {
+                                flagiden          = 1;
+                                index[flagid - 1] = 6;
+                            }
+                            if (!(strcmp(keyword, "alfy"))) {
+                                flagiden          = 1;
+                                index[flagid - 1] = 7;
+                            }
+                            if (!(strcmp(keyword, "muy"))) {
+                                flagmuy           = 1;
+                                flagiden          = 1;
+                                index[flagid - 1] = 8;
+                            }
+                            if (!(strcmp(keyword, "dx"))) {
+                                flagiden          = 1;
+                                index[flagid - 1] = 9;
+                            }
+                            if (!(strcmp(keyword, "dpx"))) {
+                                flagiden          = 1;
+                                index[flagid - 1] = 10;
+                            }
+                            if (!(strcmp(keyword, "dy"))) {
+                                flagiden          = 1;
+                                index[flagid - 1] = 11;
+                            }
+                            if (!(strcmp(keyword, "dpy"))) {
+                                flagiden          = 1;
+                                index[flagid - 1] = 12;
+                            }
+                            if (!(strcmp(keyword, "angle"))) {
+                                flagangle         = 1;
+                                flagiden          = 1;
+                                index[flagid - 1] = 13;
+                            }
+                            if (!(strcmp(keyword, "k1l"))) {
+                                flagk1l           = 1;
+                                flagiden          = 1;
+                                index[flagid - 1] = 14;
+                            }
+                            if ((!(flagiden)) && (flagid > 0)) {
+                                index[flagid - 1] = 0;
+                            }
+                        }
+                        free(keyword);
+                        flagok = 1;
+                    }
+                }
+            }
+
+            if (flagok) {
+                linecount = 0;
+                flagid    = 0;
+                while (linecount < strlen(buffer)) {
+                    while ((linecount < strlen(buffer)) && (isspace(buffer[linecount]))) {
+                        linecount = linecount + 1;
+                    }
+
+                    linecount1 = linecount;
+                    while ((linecount < strlen(buffer)) && (!(isspace(buffer[linecount])))) {
+                        linecount = linecount + 1;
+                    }
+
                     linecount2 = linecount;
-                    keyword = (char *)malloc(linecount2 - linecount1 + 1);
+                    keyword    = (char *)malloc(linecount2 - linecount1 + 1);
                     strncpy(keyword, buffer + linecount1, linecount2 - linecount1);
                     keyword[linecount2 - linecount1] = 0;
-                    if (flagid) {
-                        if (!(strcmp(keyword, "s"))) {
-                            flagiden          = 1;
-                            index[flagid - 1] = 1;
-                        }
-                        if (!(strcmp(keyword, "l"))) {
-                            flagl             = 1;
-                            flagiden          = 1;
-                            index[flagid - 1] = 2;
-                        }
-                        if (!(strcmp(keyword, "betx"))) {
-                            flagiden          = 1;
-                            index[flagid - 1] = 3;
-                        }
-                        if (!(strcmp(keyword, "alfx"))) {
-                            flagiden          = 1;
-                            index[flagid - 1] = 4;
-                        }
-                        if (!(strcmp(keyword, "mux"))) {
-                            flagmux           = 1;
-                            flagiden          = 1;
-                            index[flagid - 1] = 5;
-                        }
-                        if (!(strcmp(keyword, "bety"))) {
-                            flagiden          = 1;
-                            index[flagid - 1] = 6;
-                        }
-                        if (!(strcmp(keyword, "alfy"))) {
-                            flagiden          = 1;
-                            index[flagid - 1] = 7;
-                        }
-                        if (!(strcmp(keyword, "muy"))) {
-                            flagmuy           = 1;
-                            flagiden          = 1;
-                            index[flagid - 1] = 8;
-                        }
-                        if (!(strcmp(keyword, "dx"))) {
-                            flagiden          = 1;
-                            index[flagid - 1] = 9;
-                        }
-                        if (!(strcmp(keyword, "dpx"))) {
-                            flagiden          = 1;
-                            index[flagid - 1] = 10;
-                        }
-                        if (!(strcmp(keyword, "dy"))) {
-                            flagiden          = 1;
-                            index[flagid - 1] = 11;
-                        }
-                        if (!(strcmp(keyword, "dpy"))) {
-                            flagiden          = 1;
-                            index[flagid - 1] = 12;
-                        }
-                        if (!(strcmp(keyword, "angle"))) {
-                            flagangle         = 1;
-                            flagiden          = 1;
-                            index[flagid - 1] = 13;
-                        }
-                        if (!(strcmp(keyword, "k1l"))) {
-                            flagk1l           = 1;
-                            flagiden          = 1;
-                            index[flagid - 1] = 14;
-                        }
-                        if ((!(flagiden)) && (flagid > 0)) {
-                            index[flagid - 1] = 0;
-                        }
+                    switch (index[flagid]) { // if(!(index[flagid]==0)) //mettere switch
+                    case 1: {
+                        s2[cont] = atof(keyword);
+                        break;
+                    }
+                    case 2: {
+                        len2[cont] = atof(keyword);
+                        break;
+                    }
+                    case 3: {
+                        betx2[cont] = atof(keyword);
+                        // printf("betx2=%.10f\n",betx2[cont]);
+                        break;
+                    }
+                    case 4: {
+                        alphax2[cont] = atof(keyword);
+                        break;
+                    }
+                    case 5: {
+                        mux2[cont] = atof(keyword);
+                        break;
+                    }
+                    case 6: {
+                        bety2[cont] = atof(keyword);
+                        break;
+                    }
+                    case 7: {
+                        alphay2[cont] = atof(keyword);
+                        break;
+                    }
+                    case 8: {
+                        muy2[cont] = atof(keyword);
+                        break;
+                    }
+                    case 9: {
+                        dx2[cont] = atof(keyword);
+                        break;
+                    }
+                    case 10: {
+                        dpx2[cont] = atof(keyword);
+                        break;
+                    }
+                    case 11: {
+                        dy2[cont] = atof(keyword);
+                        break;
+                    }
+                    case 12: {
+                        dpy2[cont] = atof(keyword);
+                        break;
+                    }
+                    case 13: {
+                        angle2[cont] = atof(keyword);
+                        break;
+                    }
+                    case 14: {
+                        k1l2[cont] = atof(keyword);
+                        break;
+                    }
+                    default:
+                        break;
                     }
                     free(keyword);
-                    flagok = 1;
+                    flagid = flagid + 1;
                 }
+                cont = cont + 1;
             }
         }
+        fclose(finput);
 
-        if (flagok) {
-            linecount = 0;
-            flagid    = 0;
-            while (linecount < strlen(buffer)) {
-                while ((linecount < strlen(buffer)) && (isspace(buffer[linecount]))) {
-                    linecount = linecount + 1;
-                }
-
-                linecount1 = linecount;
-                while ((linecount < strlen(buffer)) && (!(isspace(buffer[linecount])))) {
-                    linecount = linecount + 1;
-                }
-
-                linecount2 = linecount;
-                keyword    = (char *)malloc(linecount2 - linecount1 + 1);
-                strncpy(keyword, buffer + linecount1, linecount2 - linecount1);
-                keyword[linecount2 - linecount1] = 0;
-                switch (index[flagid]) { // if(!(index[flagid]==0)) //mettere switch
-                case 1: {
-                    s2[cont] = atof(keyword);
-                    break;
-                }
-                case 2: {
-                    len2[cont] = atof(keyword);
-                    break;
-                }
-                case 3: {
-                    betx2[cont] = atof(keyword);
-                    // printf("betx2=%.10f\n",betx2[cont]);
-                    break;
-                }
-                case 4: {
-                    alphax2[cont] = atof(keyword);
-                    break;
-                }
-                case 5: {
-                    mux2[cont] = atof(keyword);
-                    break;
-                }
-                case 6: {
-                    bety2[cont] = atof(keyword);
-                    break;
-                }
-                case 7: {
-                    alphay2[cont] = atof(keyword);
-                    break;
-                }
-                case 8: {
-                    muy2[cont] = atof(keyword);
-                    break;
-                }
-                case 9: {
-                    dx2[cont] = atof(keyword);
-                    break;
-                }
-                case 10: {
-                    dpx2[cont] = atof(keyword);
-                    break;
-                }
-                case 11: {
-                    dy2[cont] = atof(keyword);
-                    break;
-                }
-                case 12: {
-                    dpy2[cont] = atof(keyword);
-                    break;
-                }
-                case 13: {
-                    angle2[cont] = atof(keyword);
-                    break;
-                }
-                case 14: {
-                    k1l2[cont] = atof(keyword);
-                    break;
-                }
-                default:
-                    break;
-                }
-                free(keyword);
-                flagid = flagid + 1;
-            }
-            cont = cont + 1;
-        }
-    }
-    fclose(finput);
-
-    npoints = cont;
-    printf("npoints=%d\n", npoints);
-    for (cont = 0; cont < npoints; cont++) {
-        if (!(flagl)) {
-            if (cont == 0) {
-                len2[cont] = 0;
-            }
-            else {
-                len2[cont] = s2[cont] - s2[cont - 1];
-            }
-        }
-        if (!(flagmux)) {
-            if (cont == 0) {
-                mux2[cont] = 0;
-            }
-            else {
-                if (betx2[cont - 1] > 0) {
-                    mux2[cont] = mux2[cont - 1] + len2[cont] / betx2[cont - 1];
+        npoints = cont;
+        printf("npoints=%d\n", npoints);
+        for (cont = 0; cont < npoints; cont++) {
+            if (!(flagl)) {
+                if (cont == 0) {
+                    len2[cont] = 0;
                 }
                 else {
-                    mux2[cont] = mux2[cont - 1];
+                    len2[cont] = s2[cont] - s2[cont - 1];
                 }
             }
-        }
-        if (!(flagmuy)) {
-            if (cont == 0) {
-                muy2[cont] = 0;
-            }
-            else {
-                if (bety2[cont - 1] > 0) {
-                    muy2[cont] = muy2[cont - 1] + len2[cont] / bety2[cont - 1];
+            if (!(flagmux)) {
+                if (cont == 0) {
+                    mux2[cont] = 0;
                 }
                 else {
-                    muy2[cont] = muy2[cont - 1];
+                    if (betx2[cont - 1] > 0) {
+                        mux2[cont] = mux2[cont - 1] + len2[cont] / betx2[cont - 1];
+                    }
+                    else {
+                        mux2[cont] = mux2[cont - 1];
+                    }
+                }
+            }
+            if (!(flagmuy)) {
+                if (cont == 0) {
+                    muy2[cont] = 0;
+                }
+                else {
+                    if (bety2[cont - 1] > 0) {
+                        muy2[cont] = muy2[cont - 1] + len2[cont] / bety2[cont - 1];
+                    }
+                    else {
+                        muy2[cont] = muy2[cont - 1];
+                    }
                 }
             }
         }
-    }
 
-    s      = (double *)malloc(npoints * sizeof(double));
-    len    = (double *)malloc(npoints * sizeof(double));
-    alphax = (double *)malloc(npoints * sizeof(double));
-    alphaz = (double *)malloc(npoints * sizeof(double));
-    betax  = (double *)malloc(npoints * sizeof(double));
-    betaz  = (double *)malloc(npoints * sizeof(double));
-    dispx  = (double *)malloc(npoints * sizeof(double));
-    disp1x = (double *)malloc(npoints * sizeof(double));
-    dispz  = (double *)malloc(npoints * sizeof(double));
-    disp1z = (double *)malloc(npoints * sizeof(double));
-    nux    = (double *)malloc(npoints * sizeof(double));
-    nuz    = (double *)malloc(npoints * sizeof(double));
-    nrep   = (int *)malloc(npoints * sizeof(int));
-    lrep   = (double *)malloc(npoints * sizeof(double));
-    if (flagangle) {
-        angle = (double *)malloc(npoints * sizeof(double));
-    }
-    if (flagk1l) {
-        k1l = (double *)malloc(npoints * sizeof(double));
-    }
-    cont = -1;
-    for (i = 0; i < npoints; i++) {
-        if (((cont < 0) && (betx2[i] > 0)) || (len2[i] > 0) || ((betx2[i] - betx2[i - 1]) * (betx2[i] - betx2[i - 1]) > 0) ||
-            ((bety2[i] - bety2[i - 1]) * (bety2[i] - bety2[i - 1]) > 0) || ((alphax2[i] - alphax2[i - 1]) * (alphax2[i] - alphax2[i - 1]) > 0) ||
-            ((alphay2[i] - alphay2[i - 1]) * (alphay2[i] - alphay2[i - 1]) > 0) || ((dy2[i] - dy2[i - 1]) * (dy2[i] - dy2[i - 1]) > 0) ||
-            ((dx2[i] - dx2[i - 1]) * (dx2[i] - dx2[i - 1]) > 0) || ((dpy2[i] - dpy2[i - 1]) * (dpy2[i] - dpy2[i - 1]) > 0) ||
-            ((dpx2[i] - dpx2[i - 1]) * (dpx2[i] - dpx2[i - 1]) > 0)) {
-            cont += 1;
-            s[cont]      = s2[i];
-            len[cont]    = len2[i];
-            alphax[cont] = alphax2[i];
-            alphaz[cont] = alphay2[i];
-            betax[cont]  = betx2[i];
-            betaz[cont]  = bety2[i];
-            nux[cont]    = mux2[i];
-            nuz[cont]    = muy2[i];
-            dispx[cont]  = dx2[i];
-            disp1x[cont] = dpx2[i];
-            dispz[cont]  = dy2[i];
-            disp1z[cont] = dpy2[i];
-            nrep[cont]   = 1;
-            if (flagangle) {
-                angle[cont] = angle2[i];
-            }
-            if (flagk1l) {
-                k1l[cont] = k1l2[i];
+        s      = (double *)malloc(npoints * sizeof(double));
+        len    = (double *)malloc(npoints * sizeof(double));
+        alphax = (double *)malloc(npoints * sizeof(double));
+        alphaz = (double *)malloc(npoints * sizeof(double));
+        betax  = (double *)malloc(npoints * sizeof(double));
+        betaz  = (double *)malloc(npoints * sizeof(double));
+        dispx  = (double *)malloc(npoints * sizeof(double));
+        disp1x = (double *)malloc(npoints * sizeof(double));
+        dispz  = (double *)malloc(npoints * sizeof(double));
+        disp1z = (double *)malloc(npoints * sizeof(double));
+        nux    = (double *)malloc(npoints * sizeof(double));
+        nuz    = (double *)malloc(npoints * sizeof(double));
+        nrep   = (int *)malloc(npoints * sizeof(int));
+        lrep   = (double *)malloc(npoints * sizeof(double));
+        if (flagangle) {
+            angle = (double *)malloc(npoints * sizeof(double));
+        }
+        if (flagk1l) {
+            k1l = (double *)malloc(npoints * sizeof(double));
+        }
+        cont = -1;
+        for (i = 0; i < npoints; i++) {
+            if (((cont < 0) && (betx2[i] > 0)) || (len2[i] > 0) || ((betx2[i] - betx2[i - 1]) * (betx2[i] - betx2[i - 1]) > 0) ||
+                ((bety2[i] - bety2[i - 1]) * (bety2[i] - bety2[i - 1]) > 0) || ((alphax2[i] - alphax2[i - 1]) * (alphax2[i] - alphax2[i - 1]) > 0) ||
+                ((alphay2[i] - alphay2[i - 1]) * (alphay2[i] - alphay2[i - 1]) > 0) || ((dy2[i] - dy2[i - 1]) * (dy2[i] - dy2[i - 1]) > 0) ||
+                ((dx2[i] - dx2[i - 1]) * (dx2[i] - dx2[i - 1]) > 0) || ((dpy2[i] - dpy2[i - 1]) * (dpy2[i] - dpy2[i - 1]) > 0) ||
+                ((dpx2[i] - dpx2[i - 1]) * (dpx2[i] - dpx2[i - 1]) > 0)) {
+                cont += 1;
+                s[cont]      = s2[i];
+                len[cont]    = len2[i];
+                alphax[cont] = alphax2[i];
+                alphaz[cont] = alphay2[i];
+                betax[cont]  = betx2[i];
+                betaz[cont]  = bety2[i];
+                nux[cont]    = mux2[i];
+                nuz[cont]    = muy2[i];
+                dispx[cont]  = dx2[i];
+                disp1x[cont] = dpx2[i];
+                dispz[cont]  = dy2[i];
+                disp1z[cont] = dpy2[i];
+                nrep[cont]   = 1;
+                if (flagangle) {
+                    angle[cont] = angle2[i];
+                }
+                if (flagk1l) {
+                    k1l[cont] = k1l2[i];
+                }
             }
         }
-    }
 
-    npoints = cont + 1;
-    for (i = 0; i < npoints; i++) {
-        if (i < (npoints - 1)) {
-            lrep[i] = len[i + 1];
+        npoints = cont + 1;
+        for (i = 0; i < npoints; i++) {
+            if (i < (npoints - 1)) {
+                lrep[i] = len[i + 1];
+            }
+            else {
+                lrep[i] = 0;
+            }
         }
-        else {
-            lrep[i] = 0;
-        }
+        cout << "END READING MADX" << endl;
+        printf("npoints=%d\n", npoints);
+        return 0;
     }
-    cout << "END READING MADX" << endl;
-    printf("npoints=%d\n", npoints);
-    return 0;
-}}
+}
 // END READ_MADX SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN READ_INPUT SUBROUTINE /////////////////////////////////////////////////////
-int read_input(char *fileinput) {
+int read_input(char *fileinput)
+{
     char *arr;
     unsigned int length;
 
@@ -1058,7 +1068,8 @@ int read_input(char *fileinput) {
 // END READ_INPUT SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN  READ_DISTRIB SUBROUTINE /////////////////////////////////////////////////////
-int read_distrib(char *filedist) {
+int read_distrib(char *filedist)
+{
     FILE *fdist;
     char name[200], buffer[5000], ch = ',', *str;
     char emitx1[300], emitz1[300], emits1[300], phasex1[300], phasez1[300], phases1[300];
@@ -1193,7 +1204,8 @@ int read_distrib(char *filedist) {
 // END READ_DISTRIB SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN  READ_GRATES SUBROUTINE /////////////////////////////////////////////////////
-int read_grates(char *filerate) {
+int read_grates(char *filerate)
+{
     FILE *frates;
     char name[200], buffer[5000], ch = '\t', *str;
     char temp1[300], exm1[300], ezm1[300], esm1[300], grx1[300], grz1[300], grs1[300];
@@ -1217,7 +1229,7 @@ int read_grates(char *filerate) {
             fgets(buffer, sizeof(buffer) / sizeof(char), frates);
             dati = 0;
             while (dati < 6) {
-                switch (dati) {// if(!(index[flagid]==0)) //mettere switch
+                switch (dati) { // if(!(index[flagid]==0)) //mettere switch
                 case 0: {
                     str = strchr(buffer, ch);
                     if (str == NULL) {
@@ -1305,7 +1317,8 @@ int read_grates(char *filerate) {
 // END READ_GRATES SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN CHECK SUBROUTINE /////////////////////////////////////////////////////
-int check(int pos1, int pos2, double prec) {
+int check(int pos1, int pos2, double prec)
+{
     if (len[pos2] != 0) {
         if (fabs(len[pos1] / len[pos2] - 1.0) > prec) {
             printf("Error 1\n");
@@ -1362,7 +1375,8 @@ int check(int pos1, int pos2, double prec) {
 // END CHECK SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN RECURRENCES SUBROUTINE /////////////////////////////////////////////////////
-int recurrences(void) {
+int recurrences(void)
+{
     double *s3, *len3, *alphax3, *alphaz3, *betax3, *betaz3, *dispx3, *disp1x3, *dispz3, *disp1z3, *nux3, *nuz3, *lrep3;
     int *nrep3;
     int start = 1, start1, current = 2, current1, start2, flag = 1, flag1, flag2, cont, cont1, current3 = 1, current4;
@@ -1628,7 +1642,8 @@ int recurrences(void) {
 // END RECURRENCES SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN RECURRENCES2 SUBROUTINE /////////////////////////////////////////////////////
-int recurrences2(void) {
+int recurrences2(void)
+{
     double *s3, *len3, *alphax3, *alphaz3, *betax3, *betaz3, *dispx3, *disp1x3, *dispz3, *disp1z3, *nux3, *nuz3, *lrep3;
     int *nrep3;
     int start = 1, start1, current = 2, current1, start2, flag = 1, flag1, flag2, cont, cont1, current3 = 1, current4;
@@ -1896,7 +1911,8 @@ int recurrences2(void) {
 
 // BEGIN INVTOMOM SUBROUTINE /////////////////////////////////////////////////////
 // Convert from invariants to momenta?
-int invtomom(int i) {
+int invtomom(int i)
+{
     int cont;
     double prova;
     FILE *fcoord;
@@ -1912,9 +1928,9 @@ int invtomom(int i) {
     prova = ran2();
 
     for (cont = 0; cont < numpart; cont++) {
-        phix[cont] = 2.0 * pi * ran2();
-        phiz[cont] = 2.0 * pi * ran2();
-        phis[cont] = 2.0 * pi * ran2();
+        phix[cont]    = 2.0 * pi * ran2();
+        phiz[cont]    = 2.0 * pi * ran2();
+        phis[cont]    = 2.0 * pi * ran2();
         deltap[cont]  = sqrt(es[cont]) * cos(phis[cont]);
         deltasp[cont] = sqrt(es[cont]) * sin(phis[cont]) / invtune;
         x[cont]       = sqrt(ex[cont] * betax[i]) * cos(phix[cont]) + dispx[i] * deltap[cont];
@@ -1936,7 +1952,8 @@ int invtomom(int i) {
 
 // BEGIN MOMTOINV SUBROUTINE /////////////////////////////////////////////////////
 // Convert from momenta to invariants?
-int momtoinv(int i) {
+int momtoinv(int i)
+{
     int cont;
 
     ex   = (double *)malloc(numpart * sizeof(double));
@@ -1980,7 +1997,8 @@ int momtoinv(int i) {
 // END MOMTOINV SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN IBS SUBROUTINE /////////////////////////////////////////////////////
-int IBS(void) {
+int IBS(void)
+{
     FILE *fprova;
     double maxx, minx, maxz, minz, maxs, mins;
     double density, totx, totz, tots;
@@ -2112,7 +2130,7 @@ int IBS(void) {
 
         ncol    = (int *)calloc(npart[cont2], sizeof(int));
         density = npart[cont2] * realn / deltacellx / deltacellz / deltacells / ncolcel; // cell density
-        limit2 = limit1;
+        limit2  = limit1;
 
         while (limit1 > 0) {
             if (limit1 == 0) {
@@ -2127,7 +2145,7 @@ int IBS(void) {
                 dummy  = (int)floor(ran2() * limit2);
                 dummy2 = part[cont2][dummy];
 
-                scatterflag = scatter(dummy1, dummy2, totz, density);  // The scatter function takes care of computing the kick and spreading momenta
+                scatterflag = scatter(dummy1, dummy2, totz, density); // The scatter function takes care of computing the kick and spreading momenta
 
                 limit2--;
                 comodino            = ncol[dummy] + 1;
@@ -2164,7 +2182,8 @@ int IBS(void) {
 // END IBS SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN SCATTER SUBROUTINE /////////////////////////////////////////////////////
-int scatter(int part1, int part2, double dimp, double dens) {
+int scatter(int part1, int part2, double dimp, double dens)
+{
     double Deltapcmx, Deltapcmz, Deltapcms;
     double Deltapcmt, Deltapcmn;
     double Deltap1cmx, Deltap1cmz, Deltap1cms;
@@ -2179,21 +2198,23 @@ int scatter(int part1, int part2, double dimp, double dens) {
     Deltapcmt = sqrt(Deltapcmx * Deltapcmx + Deltapcmz * Deltapcmz);
     Deltapcmn = sqrt(Deltapcmt * Deltapcmt + Deltapcms * Deltapcms);
 
-    Phi    = 2 * pi * ran2(); // The polar collision angle chosen randomly
-    cosphi = cos(Phi);
-    sinphi = sin(Phi);
+    Phi       = 2 * pi * ran2(); // The polar collision angle chosen randomly
+    cosphi    = cos(Phi);
+    sinphi    = sin(Phi);
     betatilda = beta * gammap / 2.0 * Deltapcmn;
-    coulomb = dimp * betatilda * betatilda / radius;
+    coulomb   = dimp * betatilda * betatilda / radius;
 
     if (coulomb > 1) {
-        coulomb = log(coulomb);
+        coulomb        = log(coulomb);
         oneminuscospsi = twopicvel * dens * radius * radius * deltat * coulomb / gammap / gammap / betatilda / betatilda / betatilda;
-        sinpsi = sq2 * sqrt(oneminuscospsi); // The azimuthal collision angle
+        sinpsi         = sq2 * sqrt(oneminuscospsi); // The azimuthal collision angle
         // Assuming Rutherford scattering, an effective scattering angle is computed (statistical effect)
         // The change in momentum will then be calculated based on this effective angle
         if (Deltapcmt) { // Total momentum change
-            Deltap1cmx = (-Deltapcmx * oneminuscospsi + (sinpsi * cosphi * Deltapcmx * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmz) / Deltapcmt) / 2.0;
-            Deltap1cmz = (-Deltapcmz * oneminuscospsi + (sinpsi * cosphi * Deltapcmz * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmx) / Deltapcmt) / 2.0;
+            Deltap1cmx =
+                (-Deltapcmx * oneminuscospsi + (sinpsi * cosphi * Deltapcmx * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmz) / Deltapcmt) / 2.0;
+            Deltap1cmz =
+                (-Deltapcmz * oneminuscospsi + (sinpsi * cosphi * Deltapcmz * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmx) / Deltapcmt) / 2.0;
             Deltap1cms = (-Deltapcms * oneminuscospsi - sinpsi * cosphi * Deltapcmt) / 2.0 * gammap;
         }
         else {
