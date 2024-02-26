@@ -20,6 +20,9 @@
 #include <time.h>
 #include <vector>
 
+#define BUFFSIZE1 5001
+#define BUFFSIZE2 50000
+#define INDEXIND 30
 #define IM1 2147483563
 #define IM2 2147483399
 #define AM (1.0 / IM1)
@@ -104,8 +107,7 @@ int convkk = 0;
 int flag_def, flag_renorm;
 
 // BEGIN MAIN SUBROUTINE ///////////////////////////////////////////////////
-int main(int narg, char *args[])
-{
+int main(int narg, char *args[]) {
     clock_t start, end;
     start = clock();
     cout << "start = " << start << endl;
@@ -152,7 +154,6 @@ int main(int narg, char *args[])
         printf("Error reading MADX file\n");
         exit(1);
     }
-
     if (narg > 4) // If narg>3 continue the simulations
     {
         flag         = read_distrib(args[4]); // Read the distribution file
@@ -162,7 +163,6 @@ int main(int narg, char *args[])
         printf("Error reading distribution file '%s', aborting...\n", distrfile);
         exit(1);
     }
-
     else if (flag_rec) {
         flag = recurrences(); // First shortening of the lattice
 
@@ -197,7 +197,6 @@ int main(int narg, char *args[])
     for (cont = 0; cont < npoints; cont++) {
         dummy += lrep[cont]; // dummy containts the new lattice length
     }
-
     printf("Circumference= %.9e m, S= %.9e m\n", dummy, s[npoints - 1]);
 
     // Check if the length of the lattice after recurrences is the same and all the lattice points are correct
@@ -515,8 +514,7 @@ int main(int narg, char *args[])
 
 // BEGIN RAN2 SUBROUTINE ////////////////////////////////////////////////////
 //* Random number generator
-double ran2(void)
-{
+double ran2(void) {
     int j;
     long k;
     float temp;
@@ -570,8 +568,7 @@ double ran2(void)
 // END RAN2 SUBROUTINE ////////////////////////////////////////////////////
 
 // BEGIN STRLWR SUBROUTINE //////////////////////////////////////////////////
-char *strlwr(char *str)
-{
+char *strlwr(char *str) {
     int k;
     for (k = 0; str[k]; k++) {
         str[k] = tolower(str[k]);
@@ -583,13 +580,8 @@ char *strlwr(char *str)
 // BEGIN READ_MADX SUBROUTINE /////////////////////////////////////////////////////
 //  Reads madx twiss file with a certain format. Columns has to follow the ordering:
 //  name,s1,len1,betx1,alphax1,mux1,bety1,alphay1,muy1,dx1,dpx1,dy1,dpy1
-int read_madx(char *filemadx)
-{
+int read_madx(char *filemadx) {
     cout << "READING MADX" << endl;
-#define BUFFSIZE1 5001
-#define BUFFSIZE2 50000
-#define INDEXIND 30
-
     char name[200], *buffer, ch = ' ', *keyword, prebuffer[BUFFSIZE1];
     char s1[200], len1[200], betx1[200], alphax1[200], mux1[200], bety1[200], alphay1[200], muy1[200], x[200], px[200], y[200], py[200], dx1[200],
         dpx1[200], dy1[200], dpy1[200], wx[200], phix[200], dmux[200], wy[200], phiy[200], dmuy[200], ddx[200], dppx[200], ddy[200], ddpy[200],
@@ -611,7 +603,6 @@ int read_madx(char *filemadx)
 
     while (!feof(finput)) { // feof is 1 when end-of-file, 0 when not end-of-file, WHILE IS TRUE WHEN DIFFERENT FROM 0
         fgets(prebuffer, BUFFSIZE1, finput);
-
         if (feof(finput)) {
             break;
         }
@@ -926,8 +917,7 @@ int read_madx(char *filemadx)
 // END READ_MADX SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN READ_INPUT SUBROUTINE /////////////////////////////////////////////////////
-int read_input(char *fileinput)
-{
+int read_input(char *fileinput) {
     char *arr;
     unsigned int length;
 
@@ -1068,8 +1058,7 @@ int read_input(char *fileinput)
 // END READ_INPUT SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN  READ_DISTRIB SUBROUTINE /////////////////////////////////////////////////////
-int read_distrib(char *filedist)
-{
+int read_distrib(char *filedist) {
     FILE *fdist;
     char name[200], buffer[5000], ch = ',', *str;
     char emitx1[300], emitz1[300], emits1[300], phasex1[300], phasez1[300], phases1[300];
@@ -1204,8 +1193,7 @@ int read_distrib(char *filedist)
 // END READ_DISTRIB SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN  READ_GRATES SUBROUTINE /////////////////////////////////////////////////////
-int read_grates(char *filerate)
-{
+int read_grates(char *filerate) {
     FILE *frates;
     char name[200], buffer[5000], ch = '\t', *str;
     char temp1[300], exm1[300], ezm1[300], esm1[300], grx1[300], grz1[300], grs1[300];
@@ -1317,8 +1305,7 @@ int read_grates(char *filerate)
 // END READ_GRATES SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN CHECK SUBROUTINE /////////////////////////////////////////////////////
-int check(int pos1, int pos2, double prec)
-{
+int check(int pos1, int pos2, double prec) {
     if (len[pos2] != 0) {
         if (fabs(len[pos1] / len[pos2] - 1.0) > prec) {
             printf("Error 1\n");
@@ -1375,8 +1362,7 @@ int check(int pos1, int pos2, double prec)
 // END CHECK SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN RECURRENCES SUBROUTINE /////////////////////////////////////////////////////
-int recurrences(void)
-{
+int recurrences(void) {
     double *s3, *len3, *alphax3, *alphaz3, *betax3, *betaz3, *dispx3, *disp1x3, *dispz3, *disp1z3, *nux3, *nuz3, *lrep3;
     int *nrep3;
     int start = 1, start1, current = 2, current1, start2, flag = 1, flag1, flag2, cont, cont1, current3 = 1, current4;
@@ -1642,8 +1628,7 @@ int recurrences(void)
 // END RECURRENCES SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN RECURRENCES2 SUBROUTINE /////////////////////////////////////////////////////
-int recurrences2(void)
-{
+int recurrences2(void) {
     double *s3, *len3, *alphax3, *alphaz3, *betax3, *betaz3, *dispx3, *disp1x3, *dispz3, *disp1z3, *nux3, *nuz3, *lrep3;
     int *nrep3;
     int start = 1, start1, current = 2, current1, start2, flag = 1, flag1, flag2, cont, cont1, current3 = 1, current4;
@@ -1911,8 +1896,7 @@ int recurrences2(void)
 
 // BEGIN INVTOMOM SUBROUTINE /////////////////////////////////////////////////////
 // Convert from invariants to momenta?
-int invtomom(int i)
-{
+int invtomom(int i) {
     int cont;
     double prova;
     FILE *fcoord;
@@ -1952,8 +1936,7 @@ int invtomom(int i)
 
 // BEGIN MOMTOINV SUBROUTINE /////////////////////////////////////////////////////
 // Convert from momenta to invariants?
-int momtoinv(int i)
-{
+int momtoinv(int i) {
     int cont;
 
     ex   = (double *)malloc(numpart * sizeof(double));
@@ -1997,8 +1980,7 @@ int momtoinv(int i)
 // END MOMTOINV SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN IBS SUBROUTINE /////////////////////////////////////////////////////
-int IBS(void)
-{
+int IBS(void) {
     FILE *fprova;
     double maxx, minx, maxz, minz, maxs, mins;
     double density, totx, totz, tots;
@@ -2182,8 +2164,7 @@ int IBS(void)
 // END IBS SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN SCATTER SUBROUTINE /////////////////////////////////////////////////////
-int scatter(int part1, int part2, double dimp, double dens)
-{
+int scatter(int part1, int part2, double dimp, double dens) {
     double Deltapcmx, Deltapcmz, Deltapcms;
     double Deltapcmt, Deltapcmn;
     double Deltap1cmx, Deltap1cmz, Deltap1cms;
