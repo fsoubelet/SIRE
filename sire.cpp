@@ -568,6 +568,7 @@ double ran2(void) {
 // END RAN2 SUBROUTINE ////////////////////////////////////////////////////
 
 // BEGIN STRLWR SUBROUTINE //////////////////////////////////////////////////
+// Converts a string to lowercase
 char *strlwr(char *str) {
     int k;
     for (k = 0; str[k]; k++) {
