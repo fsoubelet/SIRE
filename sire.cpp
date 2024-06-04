@@ -1896,6 +1896,8 @@ int recurrences2(void) {
 
 // BEGIN INVTOMOM SUBROUTINE /////////////////////////////////////////////////////
 // Convert from invariants to momenta?
+// Provided i argument is the index of the element in the lattice at which to do the conversion
+// and is used to get the optics functions at this element which are needed for the conversion
 int invtomom(int i) {
     int cont;
     double prova;
