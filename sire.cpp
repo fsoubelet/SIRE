@@ -112,6 +112,10 @@ int main(int narg, char *args[]) {
     start = clock();
     cout << "start = " << start << endl;
 
+    ////////////////////////////////////////////////
+    // WE ARE IN THE SETUP PART OF THE SIMULATION //
+    ////////////////////////////////////////////////
+
     // BEGIN READING TWISS PARAMETERS FROM MADX FILE AND INPUT PARAMETERS FROM INPUT FILE
     if (narg < 3) {
         printf("Not enough arguments.\n");
@@ -265,7 +269,7 @@ int main(int narg, char *args[]) {
 
     idum = -time(0); // no idea?
 
-    // BEGIN generating distribution if not a continuation
+    // BEGIN GENERATING DISTRIBUTION IF NOT A CONTINUATION FROM PREVIOUS SIMULATION
     if (!(continuation)) {
         ex1   = (double *)malloc(numpart * sizeof(double));
         ez1   = (double *)malloc(numpart * sizeof(double));
@@ -275,10 +279,11 @@ int main(int narg, char *args[]) {
         phis1 = (double *)malloc(numpart * sizeof(double));
 
         // Generates distribution of macroparticles.
-        // ran2(): Random number generation from 0-1 (uniform). Generation of half distribution to get always positive numbers.
+        // ran2(): Random number generation from 0-1 (uniform).
+        // Generation of half distribution to get always positive numbers.
         for (cont = 0; cont < numpart; cont++) {
-            ex1[cont] = -2 * epsx * log(1.0 - ran2()); // -2*exmean*log(1-ran2()) --> the factor of 2 is to go from emittance to action, log(1-ran2())
-                                                       // generates an exponential distribution
+            ex1[cont] = -2 * epsx * log(1.0 - ran2()); // -2*exmean*log(1-ran2()) --> the factor of 2 is to go from emittance to action,
+                                                       // log(1-ran2()) generates an exponential distribution
             ez1[cont]   = -2 * epsz * log(1.0 - ran2());
             es1[cont]   = -(delta * delta + invtune * invtune * deltas * deltas) * log(1 - ran2()); // this is alsready in action
             phix1[cont] = 2 * pi * ran2();
@@ -286,12 +291,14 @@ int main(int narg, char *args[]) {
             phis1[cont] = 2 * pi * ran2();
         }
     }
-    // END generating distribution if not continuation
+    // END GENERATING DISTRIBUTION IF NOT A CONTINUATION
 
     printf("nturns=%d\n", nturns);
     printf("npoints=%d\n", npoints);
     printf("numpart=%d\n", numpart);
 
+    // Allocate memory space for arrays that will be used in the main loop
+    // Each of these is an array with one entry per particle
     temp = (double *)calloc(NINJ + 1, sizeof(double));
     exm  = (double *)calloc(NINJ + 1, sizeof(double));
     ezm  = (double *)calloc(NINJ + 1, sizeof(double));
@@ -303,24 +310,27 @@ int main(int narg, char *args[]) {
     grz  = (double *)calloc(NINJ + 1, sizeof(double));
     grs  = (double *)calloc(NINJ + 1, sizeof(double));
 
-    // If continuation then read the Growth rates from file
+    // If CONTINUATION THEN READ GROWTH RATES FROM FILE
     if (continuation) {
         read_grates(grname);
     }
+    // OTHERWISE JUST CREATE THE FILE FOR LATER
     else {
         foutput1 = fopen(grname, "w");
         fclose(foutput1);
     }
 
+    // What the fuck?
     npoints--;
     if (s[npoints - 1] == s[npoints - 2]) {
         npoints--;
     }
 
+    // LET THE USER KNOW READING INPUTS, COMPUTING PARAMETERS AND GENERATING (GETTING) DISTRIBUTION WENT WELL
     printf("Tutto ok 1\n");
     fflush(stdout);
 
-    // If we have generated the distribution, write it to file
+    // WRITE DISTRIBUTION TO FILE IF IT WAS GENERATED
     if (!(continuation)) {
         fdist = fopen(distname, "w");
         if (fdist != NULL) {
@@ -335,7 +345,8 @@ int main(int narg, char *args[]) {
         }
     }
 
-    // Allocate some space for arrays that will be used in the main loop
+    // Allocate memory space for arrays that will be used in the main loop
+    // Each of these is an array with one entry per particle
     ex   = (double *)malloc(numpart * sizeof(double));
     ez   = (double *)malloc(numpart * sizeof(double));
     es   = (double *)malloc(numpart * sizeof(double));
@@ -357,6 +368,7 @@ int main(int narg, char *args[]) {
         grzp = (double *)malloc(numpart * sizeof(double));
         grsp = (double *)malloc(numpart * sizeof(double));
     }
+
 
     printf("Tutto ok pre-fin\n");
     fflush(stdout);
