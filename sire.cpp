@@ -435,16 +435,22 @@ int main(int narg, char *args[]) {
         }
         printf("Tutto ok 13\n");
 
-        // If not the last injection, track the distribution
+        // IF NOT THE LAST IBS INTERACTION TIME, TRACK THE DISTRIBUTION
+        // REMEMBER BETWEEN ELEMENTS WE ARE IN INVARIANTS (ACTION) SPACE: ACTION DOES NOT CHANGE
+        // AND PHASES ARE REGENERATED RANDOMLY. TO APPLY EFFECTS WE CONVERT TO MOMENTUM
+        // SPACE, APPLY AND THEN CONVERT BACK TO INVARIANTS (ACTION) SPACE
         if (KINJ - NINJ) {
             cout << "KINJ = " << KINJ << endl;
 
-            // Loop in all turns in one timestep to calculate the emittance evolution and growth rate.
-            // The results are written in file in every timestep
+            // Loop through all turns in one timestep to calculate the emittance evolution
+            // and growth rates. The results are written in file in every timestep
             for (n = 0; n < nturns; n++) {
                 printf("Turn number=%d\n", n);
+                // LOOP THROUGH EVERY POINT IN THE LATTICE
                 for (i = 0; i < npoints; i++) {
+                    // IF ASKED, APPLY IBS EFFECTS AT EACH POINT
                     if (IBSflag) {
+                        // I don't know what the if branch below does
                         if (renormbinningall == 1 || renormbinningtrans == 1) {
                             if (KINJ == KINJ1 && i == 0) {
                                 cout << "ratio = " << ratio << endl;
@@ -464,15 +470,15 @@ int main(int narg, char *args[]) {
                             }
                         }
 
-                        flag = invtomom(i);
-                        // deltat=lrep[i]/circumference*DTIME; // Original code of Alessandro
-                        deltat = lrep[i] / s[npoints - 1] * T0; //*TIMEINJ/nturns; // Update from June 14 version
+                        flag = invtomom(i); // CONVERT DISTRIBUTION TO MOMENTUM SPACE
+                        deltat = lrep[i] / s[npoints - 1] * T0;  // compute a delta_t?
                         cout << "deltat = " << deltat << endl;
                         if (fastrun)
                             deltat = deltat * nturns;
                         cout << "deltat = " << deltat << endl;
-                        flag = IBS();
-                        flag = momtoinv(i);
+                        
+                        flag = IBS(); // APPLY IBS EFFECTS (PARTICLE KICKS)
+                        flag = momtoinv(i); // CONVERT DISTRIBUTION BACK TO ACTION SPACE
 
                         if (oneturn) { // If oneturn write emittances in each lattice point
                             cout << "i = " << i << "/" << npoints << endl;
@@ -1923,7 +1929,7 @@ int recurrences2(void) {
 // END RECURRENCES2 SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN INVTOMOM SUBROUTINE /////////////////////////////////////////////////////
-// Convert from invariants to momenta?
+// Convert from invariants to momenta
 // Provided i argument is the index of the element in the lattice at which to do the conversion
 // and is used to get the optics functions at this element which are needed for the conversion
 int invtomom(int i) {
@@ -1965,7 +1971,9 @@ int invtomom(int i) {
 // END INVTOMOM SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN MOMTOINV SUBROUTINE /////////////////////////////////////////////////////
-// Convert from momenta to invariants?
+// Convert from momenta to invariants
+// Provided i argument is the index of the element in the lattice at which to do the conversion
+// and is used to get the optics functions at this element which are needed for the conversion
 int momtoinv(int i) {
     int cont;
 
@@ -2194,6 +2202,8 @@ int IBS(void) {
 // END IBS SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN SCATTER SUBROUTINE /////////////////////////////////////////////////////
+// Applies the scattering between two provided particles. This function relies
+// on a FUCKTON of global variables.
 int scatter(int part1, int part2, double dimp, double dens) {
     double Deltapcmx, Deltapcmz, Deltapcms;
     double Deltapcmt, Deltapcmn;
