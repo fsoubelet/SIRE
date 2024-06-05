@@ -443,7 +443,7 @@ int main(int narg, char *args[]) {
         // REMEMBER BETWEEN ELEMENTS WE ARE IN INVARIANTS (ACTION) SPACE: ACTION DOES NOT CHANGE
         // AND PHASES ARE REGENERATED RANDOMLY. TO APPLY EFFECTS WE CONVERT TO MOMENTUM
         // SPACE, APPLY AND THEN CONVERT BACK TO INVARIANTS (ACTION) SPACE
-        if (KINJ - NINJ) {
+        if (KINJ - NINJ) { // NINJ is the number of timesteps you devide the TEMPO (full simulation time) to calculate IBS
             cout << "KINJ = " << KINJ << endl;
 
             // Loop through all turns in one timestep to calculate the emittance evolution
@@ -545,15 +545,14 @@ int main(int narg, char *args[]) {
             fflush(foutput1);
             fclose(foutput1);
             printf("Tutto ok44! %d,%d,%d\n", n, i, flag);
-        } // End of loop over all 
+        } // End of branch doing the IBS effects, distribution tracking etc for this time step
         printf("Tutto ok5! %d,%d,%d\n", n, i, flag);
-    } // End of loop in each timestep where the IBS is calculated
+    } // End of loop over all timesteps where the IBS is calculated
 
+    // Let the user knob all is done and well, output info and exit
     printf("Tutto ok6! %d,%d,%d\n", n, i, flag);
-
     end = clock();
-    cout << "Time required for execution: " << (double)(end - start) / CLOCKS_PER_SEC << " seconds."
-         << "\n\n";
+    cout << "Time required for execution: " << (double)(end - start) / CLOCKS_PER_SEC << " seconds." << "\n\n";
     return 0;
 }
 // END MAIN SUBROUTINE ////////////////////////////////////////////////////
