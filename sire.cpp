@@ -298,15 +298,19 @@ int main(int narg, char *args[]) {
     printf("numpart=%d\n", numpart);
 
     // Allocate memory space for arrays that will be used in the main loop
-    // Each of these is an array with one entry per IBS interaction computed
-    // We will store mostly mean values of the distribution in these arrays
     temp = (double *)calloc(NINJ + 1, sizeof(double));
+    // Each here is an array with one entry per IBS interaction computed
+    // These will store mean values of the distribution (emittances) at this step
     exm  = (double *)calloc(NINJ + 1, sizeof(double));
     ezm  = (double *)calloc(NINJ + 1, sizeof(double));
     esm  = (double *)calloc(NINJ + 1, sizeof(double));
+    // Each here is an array with one entry per element in the lattice
+    // These will store mean values of the distribution (emittances) at this element
     exmt = (double *)calloc(npoints + 1, sizeof(double));
     ezmt = (double *)calloc(npoints + 1, sizeof(double));
     esmt = (double *)calloc(npoints + 1, sizeof(double));
+    // Each here is an array with one entry per IBS interaction computed
+    // These will store growth rates at this step
     grx  = (double *)calloc(NINJ + 1, sizeof(double));
     grz  = (double *)calloc(NINJ + 1, sizeof(double));
     grs  = (double *)calloc(NINJ + 1, sizeof(double));
@@ -346,9 +350,8 @@ int main(int narg, char *args[]) {
         }
     }
 
-    // Allocate memory space for arrays that will be used in the main loop
-    // Each of these is an array with one entry per particle, used for the
-    // individual invariants
+    // Allocate memory space for arrays that will be used to store the distribution coordinates
+    // Each of these is an array with one entry per particle, used for the invariants
     ex   = (double *)malloc(numpart * sizeof(double));
     ez   = (double *)malloc(numpart * sizeof(double));
     es   = (double *)malloc(numpart * sizeof(double));
@@ -404,7 +407,8 @@ int main(int narg, char *args[]) {
         // Print out the mean invariants
         cout << "exm = " << exm[KINJ] << "  ezm = " << ezm[KINJ] << "  esm = " << esm[KINJ] << endl;
 
-        if (KINJ == KINJ1) {
+        if (KINJ == KINJ1) { // If we are at the first IBS effects application, compute a ratio?
+            // TODO: need to figure out what this ratio is
             ratio = sqrt((betax[0] * exm[KINJ] + dispx[0] * dispx[0] * delta * delta) / (betaz[0] * ezm[KINJ] + dispz[0] * dispz[0] * delta * delta));
             cout << "ratio = " << ratio << endl;
         }
@@ -471,7 +475,9 @@ int main(int narg, char *args[]) {
                         }
 
                         flag = invtomom(i); // CONVERT DISTRIBUTION TO MOMENTUM SPACE
-                        deltat = lrep[i] / s[npoints - 1] * T0;  // compute a delta_t?
+                        
+                        // Compute a delta_t, used in the scattering routine
+                        deltat = lrep[i] / s[npoints - 1] * T0;  
                         cout << "deltat = " << deltat << endl;
                         if (fastrun)
                             deltat = deltat * nturns;
@@ -480,59 +486,66 @@ int main(int narg, char *args[]) {
                         flag = IBS(); // APPLY IBS EFFECTS (PARTICLE KICKS)
                         flag = momtoinv(i); // CONVERT DISTRIBUTION BACK TO ACTION SPACE
 
-                        if (oneturn) { // If oneturn write emittances in each lattice point
+                        // If we only do 1 turn, write emittances at the current lattice point
+                        // (this will have written at all points when the loop is done)
+                        if (oneturn) {
                             cout << "i = " << i << "/" << npoints << endl;
 
                             exmt[i] = 0;
                             ezmt[i] = 0;
                             esmt[i] = 0;
 
+                            // Loop over particles below to get mean value 
                             for (comodo = 0; comodo < numpart; comodo++) {
                                 exmt[i] += ex[comodo];
                                 ezmt[i] += ez[comodo];
                                 esmt[i] += es[comodo];
                             }
 
+                            // factor 2 again to compensate for distribution being in action space
                             exmt[i] /= (2 * numpart);
                             ezmt[i] /= (2 * numpart);
                             esmt[i] /= (numpart);
 
+                            // Write this to file
                             femittances = fopen(emitname, "a");
                             fprintf(femittances, "%.9e\t %.9e\t %.9e\t %.9e\t \n", s[i], exmt[i], ezmt[i], esmt[i]);
                             fflush(femittances);
                             fclose(femittances);
                         }
-                    } // END of if(IBSflag)
-                }     // End of for loop at each point of the lattice
+                    } // END OF IBS EFFECTS APPLICATION
+                } // End of for loop at each point of the lattice
 
                 //  NEEDS TO BE CHECKED! THE RESULTS ARE NOT VALID USING THIS.
-
                 if (damping) { // To take damping into account
+                // Loop over particles and change invariants according to damping
                     for (comodo = 0; comodo < numpart; comodo++) {
                         ex[comodo] = 2 * eqx + (ex[comodo] - 2 * eqx) * exp(-DTIME / dtimex);
                         ez[comodo] = 2 * eqz + (ez[comodo] - 2 * eqz) * exp(-DTIME / dtimez);
                         es[comodo] = 2 * eqs + (es[comodo] - 2 * eqs) * exp(-DTIME / dtimes);
                     } // End of for loop in each macroparticle
-                }     // End of if(damping)
+                } // End of if(damping)
 
                 if (coupling != 0) { // Take coupling into account (Simplified way, only for weak coupling)
+                    // Loop over particles and change transverse invariants according to coupling
                     for (comodo = 0; comodo < numpart; comodo++) {
                         ex[comodo] = ex[comodo] * (1 - coupling) + coupling * ez[comodo];
                         ez[comodo] = coupling * (ex[comodo] - coupling * ez[comodo]) / (1 - coupling) + (1 - coupling) * ez[comodo];
                     }
                 }
+                
                 if (fastrun)
                     n = nturns;
             } // End of loop in each turn
 
+            // Write results to file for this specific timestep (IBS effects application)
             cout << "Write to file" << endl;
             foutput1 = fopen(grname, "a");
-            fprintf(foutput1, "%d\t %.9e\t %.9e\t %.9e\t %.9e\t %.9e\t %.9e\n", KINJ, exm[KINJ], ezm[KINJ], esm[KINJ], grx[KINJ], grz[KINJ],
-                    grs[KINJ]);
+            fprintf(foutput1, "%d\t %.9e\t %.9e\t %.9e\t %.9e\t %.9e\t %.9e\n", KINJ, exm[KINJ], ezm[KINJ], esm[KINJ], grx[KINJ], grz[KINJ], grs[KINJ]);
             fflush(foutput1);
             fclose(foutput1);
             printf("Tutto ok44! %d,%d,%d\n", n, i, flag);
-        } // End of if(KINJ-NINJ) (if not the last injection)
+        } // End of loop over all 
         printf("Tutto ok5! %d,%d,%d\n", n, i, flag);
     } // End of loop in each timestep where the IBS is calculated
 
