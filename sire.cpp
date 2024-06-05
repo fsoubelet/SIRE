@@ -112,9 +112,9 @@ int main(int narg, char *args[]) {
     start = clock();
     cout << "start = " << start << endl;
 
-    ////////////////////////////////////////////////
-    // WE ARE IN THE SETUP PART OF THE SIMULATION //
-    ////////////////////////////////////////////////
+    ////////////////////////////////////////////
+    // WE ENTER IN THE SETUP PART OF THE CODE //
+    ////////////////////////////////////////////
 
     // BEGIN READING TWISS PARAMETERS FROM MADX FILE AND INPUT PARAMETERS FROM INPUT FILE
     if (narg < 3) {
@@ -298,7 +298,8 @@ int main(int narg, char *args[]) {
     printf("numpart=%d\n", numpart);
 
     // Allocate memory space for arrays that will be used in the main loop
-    // Each of these is an array with one entry per particle
+    // Each of these is an array with one entry per IBS interaction computed
+    // We will store mostly mean values of the distribution in these arrays
     temp = (double *)calloc(NINJ + 1, sizeof(double));
     exm  = (double *)calloc(NINJ + 1, sizeof(double));
     ezm  = (double *)calloc(NINJ + 1, sizeof(double));
@@ -346,7 +347,8 @@ int main(int narg, char *args[]) {
     }
 
     // Allocate memory space for arrays that will be used in the main loop
-    // Each of these is an array with one entry per particle
+    // Each of these is an array with one entry per particle, used for the
+    // individual invariants
     ex   = (double *)malloc(numpart * sizeof(double));
     ez   = (double *)malloc(numpart * sizeof(double));
     es   = (double *)malloc(numpart * sizeof(double));
@@ -354,6 +356,7 @@ int main(int narg, char *args[]) {
     phiz = (double *)malloc(numpart * sizeof(double));
     phis = (double *)malloc(numpart * sizeof(double));
     // And populate these with the existing values from the distribution
+    // we have just generated
     for (cont = 0; cont < numpart; cont++) {
         ex[cont]   = ex1[cont];
         ez[cont]   = ez1[cont];
@@ -363,21 +366,28 @@ int main(int narg, char *args[]) {
         phis[cont] = phis1[cont];
     }
 
+    // If we interpolate every time step TIMEINJ
     if (fastrun) {
+        // Allocate some more space, don't know who these are
+        // They are literally never used again
         grxp = (double *)malloc(numpart * sizeof(double));
         grzp = (double *)malloc(numpart * sizeof(double));
         grsp = (double *)malloc(numpart * sizeof(double));
     }
 
-
+    // LET THE USER KNOW FULL SIMULATION SETUP WENT WELL
     printf("Tutto ok pre-fin\n");
     fflush(stdout);
 
-    // Generates the growth times --> Loop in every time step for which the IBS growth rates are calculated
+    /////////////////////////////////////////////////
+    // WE ENTER IN THE SIMULATION PART OF THE CODE //
+    /////////////////////////////////////////////////
+
+    // WE LOOP OVER EVERY TIME STEP FOR WHICH THE IBS STUFF IS CALCULATED
     for (KINJ = KINJ1; KINJ < NINJ + 1; KINJ++) {
         cout << "KINJ=" << KINJ << endl;
         // Calculate the mean invariants of the distribution
-        for (comodo = 0; comodo < numpart; comodo++) {
+        for (comodo = 0; comodo < numpart; comodo++) {  // comodo loops over particles (indices) in the distribution
             exm[KINJ] += ex[comodo];
             ezm[KINJ] += ez[comodo];
             esm[KINJ] += es[comodo];
@@ -386,10 +396,12 @@ int main(int narg, char *args[]) {
             es1[comodo] = es[comodo];
         }
 
-        exm[KINJ] /= (2. * numpart); // The factor of 2 is to compensate the fact that the distribution is generated in action
+        // We apply a factor of 2 here is to compensate the fact that the distribution is generated in action space
+        exm[KINJ] /= (2. * numpart);
         ezm[KINJ] /= (2. * numpart);
         esm[KINJ] /= (numpart);
 
+        // Print out the mean invariants
         cout << "exm = " << exm[KINJ] << "  ezm = " << ezm[KINJ] << "  esm = " << esm[KINJ] << endl;
 
         if (KINJ == KINJ1) {
@@ -397,9 +409,11 @@ int main(int narg, char *args[]) {
             cout << "ratio = " << ratio << endl;
         }
 
-        // If not the first injection then calculate the growth rates and write them to file
+        // If not the first IBS computation make sure we're not at convergence to steady state
+        // because if that was asked, we need to exit the program
         if (KINJ - KINJ1) {
-            if (convsteadystate) {
+            // If we track until convergence to steady-state, not up to full TEMPO time
+            if (convsteadystate) {  
                 diffx = (exm[KINJ] - exm[KINJ - 1]) / exm[KINJ - 1];
                 diffz = (ezm[KINJ] - ezm[KINJ - 1]) / ezm[KINJ - 1];
                 diffs = (esm[KINJ] - esm[KINJ - 1]) / esm[KINJ - 1];
