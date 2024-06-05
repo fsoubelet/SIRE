@@ -163,6 +163,7 @@ int main(int narg, char *args[]) {
         printf("Error reading distribution file '%s', aborting...\n", distrfile);
         exit(1);
     }
+    // Potentially shorten / simplify the lattice and create new twiss file
     else if (flag_rec) {
         flag = recurrences(); // First shortening of the lattice
 
@@ -191,10 +192,9 @@ int main(int narg, char *args[]) {
         }
     }
 
+    // Compute the length of the new lattice
     dummy = 0;
-
-    // Loop in all lattice elements
-    for (cont = 0; cont < npoints; cont++) {
+    for (cont = 0; cont < npoints; cont++) { // Loop in all lattice elements
         dummy += lrep[cont]; // dummy containts the new lattice length
     }
     printf("Circumference= %.9e m, S= %.9e m\n", dummy, s[npoints - 1]);
@@ -206,34 +206,33 @@ int main(int narg, char *args[]) {
     }
     // END READING TWISS PARAMETERS FROM MADX AND INPUT PARAMETERS FROM INPUT FILE
 
+    // COMPUTE AND DISPLAY SOME GLOBAL SIMULATION PARAMETERS
     energy = sqrt(momentum * momentum + massparticle * massparticle);
     gammap = energy / massparticle;
     cout << "gamma = " << gammap << endl;
     beta          = sqrt(1 - 1 / gammap / gammap);
-    T0            = s[npoints - 1] / beta / cvel;
+    T0            = s[npoints - 1] / beta / cvel;  // Time for the particles to do a turn
     circumference = s[npoints - 1];
     cout << "circumference = " << circumference << endl;
 
+    // If we're only doing one turn pass
     if (oneturn) {
         NINJ  = 1.;
-        TEMPO = T0;
-        DTIME = T0;
-        //    TIMEINJ=1.0*DTIME;	// Time step that adds a line in the output file
+        TEMPO = T0;  // TEMPO is the full time length of the simulation (here T0, time for 1 turn)
+        DTIME = T0;  // DTIME is the time interval of print information
         nturns = 1;
     }
+    // If we're doing multiple turns
     else {
         if (checktime)
-            TEMPO = nturnstostudy * T0;
-        DTIME = TEMPO / NIBSruns; // The number in the denominator, is the number of times the IBS force is calculated in the time TEMP0. DTIME should
-                                  // be much smaller than the IBS growth time
-                                  //    TIMEINJ=1.0*DTIME;	// Time step that adds a line in the output file
-        NINJ   = NIBSruns;        // Number of loops to run AND WRITE IN OUTPUT FILE
-        nturns = (int)ceil(DTIME / T0); //(int)floor(TEMPO/T0); // Number of turns per timestep
-
-        TIMEINJ = nturns * T0;
+            TEMPO = nturnstostudy * T0;  // TEMPO is the full time length of the simulation (nturnstostudy * turn_time)
+        DTIME = TEMPO / NIBSruns;        // time interval of print information (should be much smaller than the IBS growth time)
+        NINJ   = NIBSruns;               // Number of loops to run AND WRITE IN OUTPUT FILE
+        nturns = (int)ceil(DTIME / T0);  // Number of turns per timestep
+        TIMEINJ = nturns * T0;  // Timestep
     }
 
-    // Display some of the parameters to the command line
+    // DISPLAY SOME PARAMETERS TO COMMANDLINE
     cout << "fastrun=" << fastrun << endl;
     cout << "checktime=" << checktime << endl;
     cout << "convsteadystate=" << convsteadystate << endl;
@@ -246,20 +245,22 @@ int main(int narg, char *args[]) {
     cout << "Number of macroparticles=" << numpart << endl;
     cout << "T0 = " << T0 << endl;
 
+    // If we continue from a previous job
     if (continuation) {
         numpart = numpart1;
     }
     else {
-        KINJ1 = 0;
+        KINJ1 = 0;  // Used later for current time step??
     }
 
     realn = (double)numbunch / numpart; // Number of real particles in one macroparticle
 
-    if (eqdeltas == 0) {
-        invtune = delta / deltas; // Longitudinal invariant
+    // Compute longitudinal invariant 'invtune'
+    if (eqdeltas == 0) {  // if no equilibrium bunch length was given
+        invtune = delta / deltas; // starting energy spread / starting bunch length
     }
     else {
-        invtune = eqdelta / eqdeltas;
+        invtune = eqdelta / eqdeltas; // equilibrium energy spread / equilibrium bunch length
     }
 
     idum = -time(0); // no idea?
