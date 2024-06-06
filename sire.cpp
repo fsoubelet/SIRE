@@ -2038,6 +2038,7 @@ int IBS(void) {
     int *cell, *npart, **part, *ncol;
     int flag, comodino, j1, j2, conteur = 0, limit1, limit2, ncolcel;
 
+    // Start putting 'any' value from these (they are read from the MAD-X Twiss)
     maxx = x[0];
     minx = x[0];
     maxz = z[0];
@@ -2045,7 +2046,7 @@ int IBS(void) {
     maxs = deltasp[0];
     mins = deltasp[0];
 
-    // Finds the limits of the distributions
+    // Finds the limits of the distributions: max and min in each dimension
     for (cont = 1; cont < numpart; cont++) {
         if (x[cont] < minx) {
             minx = x[cont];
@@ -2087,22 +2088,23 @@ int IBS(void) {
     //  ncellt=ncellx*ncellz;	// Number of cells in the transverse plane
 
     // Defines the size of each cell.
-    // The cells are equal with respect to there size in space (not current)
-    // Each cell has to contain not to few but also not too many macroparticles
-    // to take into account of interactions with close encounters.
+    // The cells are equal with respect to their size in space (not current)
+    // Each cell has to contain not too few but also not too many macroparticles to take into account of interactions with close encounters.
     // We are interested only in binary collisions due to charge. The further distance encounters will contribute to space charge, not the IBS
 
-    if (flag_def == 1) {
+    if (flag_def == 1) {  // true when (KINJ == KINJ1 && i == 0) in the main loop (i.e. not first IBS effect, not first element)
         deltacellx = totx / ncellx;
         deltacellz = totz / ncellz;
         deltacells = tots / ncells;
     }
-    if (flag_renorm == 1) {
+    if (flag_renorm == 1) {  // true when (KINJ > KINJ1 || i > 0) in the main loop (i.e. )
         ncellx = ceil(totx / deltacellx);
         ncellz = ceil(totz / deltacellz);
         ncells = ceil(tots / deltacells);
     }
 
+    // We cap the number of cells to 999 in every direction and find the
+    // 'deltacell' which is the size of the cell in a given direction
     if (ncellx >= 1000) {
         ncellx     = 999;
         deltacellx = totx / ncellx;
@@ -2116,26 +2118,29 @@ int IBS(void) {
         deltacells = tots / ncells;
     }
 
+    // Print this out to the command line
     cout << "deltacellx = " << deltacellx << "  ncellx = " << ncellx << endl;
     cout << "deltacellz = " << deltacellz << "  ncellz = " << ncellz << endl;
     cout << "deltacells = " << deltacells << "  ncells = " << ncells << endl;
 
     ncellt   = ncellx * ncellz; // Number of cells in the transverse plane
-    ncelltot = ncellt * ncells;
+    ncelltot = ncellt * ncells; // Total number of cells
 
-    // BEGIN GROUPING PARTICLES IN CELLS
-    cell  = (int *)malloc(numpart * sizeof(int));
-    npart = (int *)calloc(ncelltot, sizeof(int));
-    part  = (int **)malloc(ncelltot * sizeof(int *));
+    ///////////////////////////////////////
+    // BEGIN GROUPING PARTICLES IN CELLS //
+    ///////////////////////////////////////
+    cell  = (int *)malloc(numpart * sizeof(int));  // characteristic integer (see below) for each particle
+    npart = (int *)calloc(ncelltot, sizeof(int));  // number of particles with the same characteristic integer (per cell)
+    part  = (int **)malloc(ncelltot * sizeof(int *));  //
 
+    // We loop over all particles and place them in cells by assigning a characteristic
+    // integer: all macroparticles in the same cell will have the same integer
     for (cont = 0; cont < numpart; cont++) {
-        // characteristic integer for each macroparticle. Macroparticles in the same cell will have the same integer
-        // (I think this based on a PIC algorithm???)
-        cell[cont] = ((int)floor((deltasp[cont] - mins) / deltacells)) * ncellt + ((int)floor((z[cont] - minz) / deltacellz)) * ncellx +
-                     ((int)floor((x[cont] - minx) / deltacellx));
+        cell[cont] = ((int)floor((deltasp[cont] - mins) / deltacells)) * ncellt + ((int)floor((z[cont] - minz) / deltacellz)) * ncellx + ((int)floor((x[cont] - minx) / deltacellx)); // calculation of the integer for this particle
         npart[cell[cont]]++; // counts the number of macroparticles with the same integer
     }
 
+    // loop over the cells to do???
     for (cont2 = 0; cont2 < ncelltot; cont2++) {
         part[cont2] = (int *)malloc(npart[cont2] * sizeof(int));
     }
@@ -2148,37 +2153,49 @@ int IBS(void) {
         part[cell[cont]][npart[cell[cont]]] = cont; // identity of the particle in the cell "cell" with number of particles "npart"
         npart[cell[cont]]++;                        // macro-particles per cell (it is used later for the definition of density)
     }
-    // END GROUPING PARTICLES IN CELLS
+    /////////////////////////////////////
+    // END GROUPING PARTICLES IN CELLS //
+    /////////////////////////////////////
 
-    // BEGIN SHUFFLING & SCATTERING OF PARTICLES IN EACH CELL
+    ////////////////////////////////////////////////////////////
+    // BEGIN SHUFFLING & SCATTERING OF PARTICLES IN EACH CELL //
+    ////////////////////////////////////////////////////////////
+    // We loop over the cells
     for (cont2 = 0; cont2 < ncelltot; cont2++) {
-        limit1 = npart[cont2] - 1;
-        if (ncollisions >= npart[cont2]) {
+        limit1 = npart[cont2] - 1; // number of particles in this cell - 1
+        
+        // Determine the number of collisions to do for this cell
+        if (ncollisions >= npart[cont2]) { // if number of collisions per macroparticle (in inputs file) > number of parts in this cell
             ncolcel = limit1;
         }
         else {
-            ncolcel = ncollisions;
+            ncolcel = ncollisions;  // number of collisions to do for this cell
         }
 
-        ncol    = (int *)calloc(npart[cont2], sizeof(int));
-        density = npart[cont2] * realn / deltacellx / deltacellz / deltacells / ncolcel; // cell density
+        ncol    = (int *)calloc(npart[cont2], sizeof(int)); // count the number of collisions for a given part or cell??
+        density = npart[cont2] * realn / deltacellx / deltacellz / deltacells / ncolcel; // cell density number
         limit2  = limit1;
 
+        // Loop as long as the number of ??? is not 0 (collisions to do in the cell?)
         while (limit1 > 0) {
             if (limit1 == 0) {
                 printf("Errore limit1=%d!\n", limit1);
                 exit(1);
             }
 
-            nump   = ncolcel - ncol[limit1];
-            dummy1 = part[cont2][limit1];
+            nump   = ncolcel - ncol[limit1];  // number of particles left to collide??
+            dummy1 = part[cont2][limit1];  // the ID of a given particle?? idk
 
+            // Loop over the particles
             for (cont = 0; cont < nump; cont++) {
-                dummy  = (int)floor(ran2() * limit2);
-                dummy2 = part[cont2][dummy];
+                dummy  = (int)floor(ran2() * limit2);  // idk man :(
+                dummy2 = part[cont2][dummy];  // the ID of another particle??
 
-                scatterflag = scatter(dummy1, dummy2, totz, density); // The scatter function takes care of computing the kick and spreading momenta
+                // Call scatter function that takes care of computing the Coulomb
+                // kick and changing momenta for these two particles
+                scatterflag = scatter(dummy1, dummy2, totz, density);
 
+                // Here I have no clue...
                 limit2--;
                 comodino            = ncol[dummy] + 1;
                 ncol[dummy]         = ncol[limit2];
@@ -2186,6 +2203,7 @@ int IBS(void) {
                 part[cont2][dummy]  = part[cont2][limit2];
                 part[cont2][limit2] = dummy2;
 
+                // Also no clue
                 if (ncol[limit2] == ncolcel) {
                     limit1--;
                     comodino            = ncol[limit1];
@@ -2203,19 +2221,23 @@ int IBS(void) {
         free(ncol);
         free(part[cont2]);
     }
-    // END SHUFFLING & SCATTERING OF PARTICLES IN EACH CELL
+    //////////////////////////////////////////////////////////
+    // END SHUFFLING & SCATTERING OF PARTICLES IN EACH CELL //
+    //////////////////////////////////////////////////////////
 
     free(npart);
     free(cell);
     free(part);
-
     return 0;
 }
 // END IBS SUBROUTINE /////////////////////////////////////////////////////
 
 // BEGIN SCATTER SUBROUTINE /////////////////////////////////////////////////////
-// Applies the scattering between two provided particles. This function relies
-// on a FUCKTON of global variables.
+// Applies the scattering between two provided particles. This function relies on a FUCKTON of global variables.
+// part1 should be the ID of particle 1 or something
+// part2 should be the ID of particle 1 or something
+// dimp is given as 'totz' at call (in IBS func) which is the (maxz - minz) - total space in z
+// dens is the computed density (in IBS func)
 int scatter(int part1, int part2, double dimp, double dens) {
     double Deltapcmx, Deltapcmz, Deltapcms;
     double Deltapcmt, Deltapcmn;
