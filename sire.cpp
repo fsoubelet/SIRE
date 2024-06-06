@@ -2246,44 +2246,47 @@ int scatter(int part1, int part2, double dimp, double dens) {
     double betatilda, coulomb;
     double oneminuscospsi;
 
-    // angle change of colliding particles
-    Deltapcmx = xp[part1] - xp[part2];
-    Deltapcmz = zp[part1] - zp[part2];
-    Deltapcms = (deltap[part1] - deltap[part2]) / gammap;
+    // Computing the delta of relevant coordinates (momenta) between the two particles
+    // Think this is computed in the center of mass (pcm)
+    Deltapcmx = xp[part1] - xp[part2];  // in horizontal
+    Deltapcmz = zp[part1] - zp[part2];  // in vertical
+    Deltapcms = (deltap[part1] - deltap[part2]) / gammap;  // in longitudinal
+    
+    // Total momentum change in transverse and longitudinal?
     Deltapcmt = sqrt(Deltapcmx * Deltapcmx + Deltapcmz * Deltapcmz);
     Deltapcmn = sqrt(Deltapcmt * Deltapcmt + Deltapcms * Deltapcms);
 
-    Phi       = 2 * pi * ran2(); // The polar collision angle chosen randomly
+    // The angle change of colliding particles
+    Phi       = 2 * pi * ran2(); // The polar collision angle, which is chosen randomly
     cosphi    = cos(Phi);
     sinphi    = sin(Phi);
     betatilda = beta * gammap / 2.0 * Deltapcmn;
-    coulomb   = dimp * betatilda * betatilda / radius;
+    coulomb   = dimp * betatilda * betatilda / radius;  // to be used for the coulomb logarithm?
 
     if (coulomb > 1) {
         coulomb        = log(coulomb);
         oneminuscospsi = twopicvel * dens * radius * radius * deltat * coulomb / gammap / gammap / betatilda / betatilda / betatilda;
         sinpsi         = sq2 * sqrt(oneminuscospsi); // The azimuthal collision angle
+
         // Assuming Rutherford scattering, an effective scattering angle is computed (statistical effect)
         // The change in momentum will then be calculated based on this effective angle
-        if (Deltapcmt) { // Total momentum change
-            Deltap1cmx =
-                (-Deltapcmx * oneminuscospsi + (sinpsi * cosphi * Deltapcmx * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmz) / Deltapcmt) / 2.0;
-            Deltap1cmz =
-                (-Deltapcmz * oneminuscospsi + (sinpsi * cosphi * Deltapcmz * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmx) / Deltapcmt) / 2.0;
+        if (Deltapcmt) { // If total momentum change
+            Deltap1cmx = (-Deltapcmx * oneminuscospsi + (sinpsi * cosphi * Deltapcmx * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmz) / Deltapcmt) / 2.0;
+            Deltap1cmz = (-Deltapcmz * oneminuscospsi + (sinpsi * cosphi * Deltapcmz * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmx) / Deltapcmt) / 2.0;
             Deltap1cms = (-Deltapcms * oneminuscospsi - sinpsi * cosphi * Deltapcmt) / 2.0 * gammap;
         }
-        else {
+        else {  // If total momentum conservation
             Deltap1cmx = Deltapcmn * sinpsi * cosphi / 2.0;
             Deltap1cmz = Deltapcmn * sinpsi * sinphi / 2.0;
             Deltap1cms = -Deltapcmn * oneminuscospsi / 2.0 * gammap;
         }
-        // New angles of the two colliding particles after collision
-        xp[part1]     = xp[part1] + Deltap1cmx;
-        zp[part1]     = zp[part1] + Deltap1cmz;
-        deltap[part1] = deltap[part1] + Deltap1cms;
 
+        // We modify the coordinates of the 2 particles directly from this computed delta
+        xp[part1]     = xp[part1] + Deltap1cmx;
         xp[part2]     = xp[part2] - Deltap1cmx;
+        zp[part1]     = zp[part1] + Deltap1cmz;
         zp[part2]     = zp[part2] - Deltap1cmz;
+        deltap[part1] = deltap[part1] + Deltap1cms;
         deltap[part2] = deltap[part2] - Deltap1cms;
     }
     return 0;
