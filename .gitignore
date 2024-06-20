@@ -249,3 +249,7 @@ Temporary Items
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/vcs.xml
 /.idea/PyhDToolkit.iml
+
+
+# Compiled sire code
+sire.exec
