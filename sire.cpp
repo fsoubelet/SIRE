@@ -2085,13 +2085,10 @@ int IBS(void) {
     totz = (maxz - minz);
     tots = (maxs - mins);
 
-    //  ncellt=ncellx*ncellz;	// Number of cells in the transverse plane
-
-    // Defines the size of each cell.
+    // Define the size of each cell.
     // The cells are equal with respect to their size in space (not current)
     // Each cell has to contain not too few but also not too many macroparticles to take into account of interactions with close encounters.
     // We are interested only in binary collisions due to charge. The further distance encounters will contribute to space charge, not the IBS
-
     if (flag_def == 1) {  // true when (KINJ == KINJ1 && i == 0) in the main loop (i.e. not first IBS effect, not first element)
         deltacellx = totx / ncellx;
         deltacellz = totz / ncellz;
