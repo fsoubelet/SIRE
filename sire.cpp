@@ -2128,7 +2128,7 @@ int IBS(void) {
     ///////////////////////////////////////
     cell  = (int *)malloc(numpart * sizeof(int));  // characteristic integer (see below) for each particle
     npart = (int *)calloc(ncelltot, sizeof(int));  // number of particles with the same characteristic integer (per cell)
-    part  = (int **)malloc(ncelltot * sizeof(int *));  //
+    part  = (int **)malloc(ncelltot * sizeof(int *));  // ???
 
     // We loop over all particles and place them in cells by assigning a characteristic
     // integer: all macroparticles in the same cell will have the same integer
@@ -2147,7 +2147,7 @@ int IBS(void) {
     fflush(stdout);
 
     for (cont = 0; cont < numpart; cont++) {
-        part[cell[cont]][npart[cell[cont]]] = cont; // identity of the particle in the cell "cell" with number of particles "npart"
+        part[cell[cont]][npart[cell[cont]]] = cont; // identity of the particle in the cell "cell" with number of particles "npart"??
         npart[cell[cont]]++;                        // macro-particles per cell (it is used later for the definition of density)
     }
     /////////////////////////////////////
@@ -2160,7 +2160,7 @@ int IBS(void) {
     // We loop over the cells
     for (cont2 = 0; cont2 < ncelltot; cont2++) {
         limit1 = npart[cont2] - 1; // number of particles in this cell - 1
-        
+
         // Determine the number of collisions to do for this cell
         if (ncollisions >= npart[cont2]) { // if number of collisions per macroparticle (in inputs file) > number of parts in this cell
             ncolcel = limit1;
@@ -2171,11 +2171,13 @@ int IBS(void) {
 
         ncol    = (int *)calloc(npart[cont2], sizeof(int)); // count the number of collisions for a given part or cell??
         density = npart[cont2] * realn / deltacellx / deltacellz / deltacells / ncolcel; // cell density number
+        // density = n_macroparticles_in_cell * n_real_particles_per_macroparticle / (dx * dy * dz / number_of_collisions)
         limit2  = limit1;
 
         // Loop as long as the number of ??? is not 0 (collisions to do in the cell?)
+        // Here limit1 starts as the number of particles in the cell - 1
         while (limit1 > 0) {
-            if (limit1 == 0) {
+            if (limit1 == 0) {  // literally we can't enter that condition lol
                 printf("Errore limit1=%d!\n", limit1);
                 exit(1);
             }

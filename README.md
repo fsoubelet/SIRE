@@ -75,7 +75,7 @@ checktime:       A boolean integer, 0 if you want to see the TEMPO, 1 to see the
 One may wish to modify the following in the `SIRE` code itself (`sire.cpp`):
 
 ```txt
-precision:              Determines how the recurrences work: elements of the lattice with twiss functions differing of less than precision % are considered equal. The closer it is to 1 -> more recurrences -> shorter lattice -> less computation time but also less accuracy. The closer it is to 0 -> less recurrences -> higher accuracy.
+precision:              Determines how the recurrences work: elements of the lattice with twiss functions differing of less than precision % are considered equal. The closer it is to 1 -> more recurrences -> shorter lattice -> less computation time but also less accuracy. The closer it is to 0 -> less recurrences -> higher computation time and higher accuracy.
 renormbinningtrans(=1): A boolean integer. If set to 1, sees ncellx as f(ncells) using the mppercell value.
 renormbinningall(=1):   A boolean integer. If set to 1, sees ncellz as f(ncells) using the mppercell value.
 mppercell(=5):          The number of macro-particles per cell. Determines the number of created cells.
