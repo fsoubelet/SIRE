@@ -2235,7 +2235,7 @@ int IBS(void) {
 // Applies the scattering between two provided particles. This function relies on a FUCKTON of global variables.
 // part1 should be the ID of particle 1 or something
 // part2 should be the ID of particle 1 or something
-// dimp is given as 'totz' at call (in IBS func) which is the (maxz - minz) - total space in z
+// dimp is given as 'totz' at call (in IBS func) which is the (maxz - minz) - total space in Y (remember in SIRE vertical is Z)
 // dens is the computed density (in IBS func)
 int scatter(int part1, int part2, double dimp, double dens) {
     double Deltapcmx, Deltapcmz, Deltapcms;
@@ -2245,18 +2245,22 @@ int scatter(int part1, int part2, double dimp, double dens) {
     double betatilda, coulomb;
     double oneminuscospsi;
 
+    cout << "dimp parameter (totz) = " << dimp;  // for reproduction / debugging 
+    cout << "Cell density = " << dens;  // for reproduction / debugging 
+
     // Computing the delta of relevant coordinates (momenta) between the two particles
     // Think this is computed in the center of mass (pcm)
     Deltapcmx = xp[part1] - xp[part2];  // in horizontal
     Deltapcmz = zp[part1] - zp[part2];  // in vertical
-    Deltapcms = (deltap[part1] - deltap[part2]) / gammap;  // in longitudinal
-    
-    // Total momentum change in transverse and longitudinal?
+    Deltapcms = (deltap[part1] - deltap[part2]) / gammap;  // in longitudinal, gammap is relativistic gamma
+
+    // Total momentum change in transverse and then in total?
     Deltapcmt = sqrt(Deltapcmx * Deltapcmx + Deltapcmz * Deltapcmz);
     Deltapcmn = sqrt(Deltapcmt * Deltapcmt + Deltapcms * Deltapcms);
 
     // The angle change of colliding particles
     Phi       = 2 * pi * ran2(); // The polar collision angle, which is chosen randomly
+    cout << "Polar collision angle = " << Phi;  // for reproduction / debugging 
     cosphi    = cos(Phi);
     sinphi    = sin(Phi);
     betatilda = beta * gammap / 2.0 * Deltapcmn;
@@ -2269,12 +2273,12 @@ int scatter(int part1, int part2, double dimp, double dens) {
 
         // Assuming Rutherford scattering, an effective scattering angle is computed (statistical effect)
         // The change in momentum will then be calculated based on this effective angle
-        if (Deltapcmt) { // If total momentum change
+        if (Deltapcmt) { // If transverse momentum change, it's taken into account
             Deltap1cmx = (-Deltapcmx * oneminuscospsi + (sinpsi * cosphi * Deltapcmx * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmz) / Deltapcmt) / 2.0;
             Deltap1cmz = (-Deltapcmz * oneminuscospsi + (sinpsi * cosphi * Deltapcmz * Deltapcms - sinpsi * sinphi * Deltapcmn * Deltapcmx) / Deltapcmt) / 2.0;
             Deltap1cms = (-Deltapcms * oneminuscospsi - sinpsi * cosphi * Deltapcmt) / 2.0 * gammap;
         }
-        else {  // If total momentum conservation
+        else {  // If transverse momentum conservation, only use
             Deltap1cmx = Deltapcmn * sinpsi * cosphi / 2.0;
             Deltap1cmz = Deltapcmn * sinpsi * sinphi / 2.0;
             Deltap1cms = -Deltapcmn * oneminuscospsi / 2.0 * gammap;
