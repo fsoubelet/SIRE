@@ -2161,6 +2161,10 @@ int IBS(void) {
     for (cont2 = 0; cont2 < ncelltot; cont2++) {
         limit1 = npart[cont2] - 1; // number of particles in this cell - 1
 
+        cout << endl;  // for reproduction / debugging
+        cout << "CELL NUMBER: " << cont2 << endl;  // for reproduction / debugging
+        cout << "NUMBER OF PARTICLES = " << npart[cont2] << endl;  // for reproduction / debugging
+
         // Determine the number of collisions to do for this cell
         if (ncollisions >= npart[cont2]) { // if number of collisions per macroparticle (in inputs file) > number of parts in this cell
             ncolcel = limit1;
@@ -2173,6 +2177,9 @@ int IBS(void) {
         density = npart[cont2] * realn / deltacellx / deltacellz / deltacells / ncolcel; // cell density number
         // density = n_macroparticles_in_cell * n_real_particles_per_macroparticle / (dx * dy * dz / number_of_collisions)
         limit2  = limit1;
+
+        cout << "dimp parameter (totz) = " << dimp << endl;  // for reproduction / debugging
+        cout << "Cell density = " << dens << endl;  // for reproduction / debugging
 
         // Loop as long as the number of ??? is not 0 (collisions to do in the cell?)
         // Here limit1 starts as the number of particles in the cell - 1
@@ -2245,8 +2252,8 @@ int scatter(int part1, int part2, double dimp, double dens) {
     double betatilda, coulomb;
     double oneminuscospsi;
 
-    cout << "dimp parameter (totz) = " << dimp;  // for reproduction / debugging 
-    cout << "Cell density = " << dens;  // for reproduction / debugging 
+    cout << "Particle 1 momenta: " << xp[part1] << zp[part1] << deltap[part1] << endl;  // for reproduction / debugging
+    cout << "Particle 2 momenta: " << xp[part2] << zp[part2] << deltap[part2] << endl;  // for reproduction / debugging
 
     // Computing the delta of relevant coordinates (momenta) between the two particles
     // Think this is computed in the center of mass (pcm)
@@ -2260,7 +2267,7 @@ int scatter(int part1, int part2, double dimp, double dens) {
 
     // The angle change of colliding particles
     Phi       = 2 * pi * ran2(); // The polar collision angle, which is chosen randomly
-    cout << "Polar collision angle = " << Phi;  // for reproduction / debugging 
+    cout << "Polar collision angle = " << Phi << endl;  // for reproduction / debugging
     cosphi    = cos(Phi);
     sinphi    = sin(Phi);
     betatilda = beta * gammap / 2.0 * Deltapcmn;
@@ -2283,6 +2290,9 @@ int scatter(int part1, int part2, double dimp, double dens) {
             Deltap1cmz = Deltapcmn * sinpsi * sinphi / 2.0;
             Deltap1cms = -Deltapcmn * oneminuscospsi / 2.0 * gammap;
         }
+
+        cout << "Deltas part 1 (+): " << Deltap1cmx << Deltap1cmz << Deltap1cms << endl;  // for reproduction / debugging
+        cout << endl;  // for reproduction / debugging
 
         // We modify the coordinates of the 2 particles directly from this computed delta
         xp[part1]     = xp[part1] + Deltap1cmx;
