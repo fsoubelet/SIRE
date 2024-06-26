@@ -3996,8 +3996,8 @@ int IBS(void)
       density=npart[cont2]*realn/deltacellx/deltacellz/deltacells/ncolcel; // cell density 
 	  limit2=limit1;
       
-	  cout << "dimp parameter (totz) = " << dimp << endl;  // for reproduction / debugging
-      cout << "Cell density = " << dens << endl;  // for reproduction / debugging
+	  cout << "dimp parameter (totz) = " << totz << endl;  // for reproduction / debugging
+      cout << "Cell density = " << density << endl;  // for reproduction / debugging
       
       while(limit1 > 0)
 	{

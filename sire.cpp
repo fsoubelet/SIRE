@@ -2178,8 +2178,8 @@ int IBS(void) {
         // density = n_macroparticles_in_cell * n_real_particles_per_macroparticle / (dx * dy * dz / number_of_collisions)
         limit2  = limit1;
 
-        cout << "dimp parameter (totz) = " << dimp << endl;  // for reproduction / debugging
-        cout << "Cell density = " << dens << endl;  // for reproduction / debugging
+        cout << "dimp parameter (totz) = " << totz << endl;  // for reproduction / debugging
+        cout << "Cell density = " << density << endl;  // for reproduction / debugging
 
         // Loop as long as the number of ??? is not 0 (collisions to do in the cell?)
         // Here limit1 starts as the number of particles in the cell - 1
