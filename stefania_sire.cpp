@@ -3980,9 +3980,9 @@ int IBS(void)
   for(cont2=0;cont2<ncelltot;cont2++)
     {
       limit1=npart[cont2]-1;
-	  cout << endl;
-	  cout << "CELL NUMBER: " << cont2 << endl;
-	  cout << "NUMBER OF PARTICLES: " << npart[cont2] << endl;
+	  cout << endl;  // for reproduction / debugging
+	  cout << "CELL NUMBER: " << cont2 << endl;  // for reproduction / debugging
+	  cout << "NUMBER OF PARTICLES = " << npart[cont2] << endl;  // for reproduction / debugging
       if(ncollisions>=npart[cont2])
 	{
 	  ncolcel=limit1;
@@ -3994,8 +3994,10 @@ int IBS(void)
       
       ncol=(int*)calloc(npart[cont2],sizeof(int));
       density=npart[cont2]*realn/deltacellx/deltacellz/deltacells/ncolcel; // cell density 
+	  limit2=limit1;
       
-      limit2=limit1;
+	  cout << "dimp parameter (totz) = " << dimp << endl;  // for reproduction / debugging
+      cout << "Cell density = " << dens << endl;  // for reproduction / debugging
       
       while(limit1 > 0)
 	{
@@ -4064,9 +4066,6 @@ int scatter(int part1, int part2, double dimp, double dens)
   double  Psi,Phi,cosphi,sinphi,cospsi,sinpsi;
   double  betatilda,coulomb;
   double  oneminuscospsi;
-
-  cout << "dimp parameter (totz) = " << dimp << endl;  // for reproduction / debugging 
-  cout << "Cell density = " << dens << endl;  // for reproduction / debugging 
 
   cout << "Particle 1 momenta: " << xp[part1] << zp[part1] << deltap[part1] << endl;  // for reproduction / debugging 
   cout << "Particle 2 momenta: " << xp[part2] << zp[part2] << deltap[part2] << endl;  // for reproduction / debugging 
