@@ -4067,8 +4067,8 @@ int scatter(int part1, int part2, double dimp, double dens)
   double  betatilda,coulomb;
   double  oneminuscospsi;
 
-  cout << "Particle 1 momenta: " << xp[part1] << zp[part1] << deltap[part1] << endl;  // for reproduction / debugging 
-  cout << "Particle 2 momenta: " << xp[part2] << zp[part2] << deltap[part2] << endl;  // for reproduction / debugging 
+  cout << "Particle 1 momenta: " << xp[part1] << zp[part1] << deltap[part1] << endl;  // for reproduction / debugging
+  cout << "Particle 2 momenta: " << xp[part2] << zp[part2] << deltap[part2] << endl;  // for reproduction / debugging
 
   // angle change of colliding particles
   Deltapcmx=xp[part1]-xp[part2];
@@ -4079,11 +4079,10 @@ int scatter(int part1, int part2, double dimp, double dens)
   Deltapcmn=sqrt(Deltapcmt*Deltapcmt+Deltapcms*Deltapcms);
   
   Phi=2*pi*ran2(); // The polar collision angle chosen randomly
-  cout << "Polar collision angle = " << Phi << endl;  // for reproduction / debugging 
-  cout << "" << endl;  // for reproduction / debugging
+  cout << "Polar collision angle = " << Phi << endl;  // for reproduction / debugging
   cosphi=cos(Phi);
   sinphi=sin(Phi);
-  
+
   betatilda=beta*gammap/2.0*Deltapcmn;
   
   coulomb=dimp*betatilda*betatilda/radius;
@@ -4113,6 +4112,10 @@ int scatter(int part1, int part2, double dimp, double dens)
 	  Deltap1cmz=Deltapcmn*sinpsi*sinphi/2.0;
 	  Deltap1cms=-Deltapcmn*oneminuscospsi/2.0*gammap;
 	}
+
+	  cout << "Deltas part 1 (+): " << Deltap1cmx << Deltap1cmz << Deltap1cms << endl;  // for reproduction / debugging
+      cout << endl;  // for reproduction / debugging
+
       // New angles of the two colliding particles after collision
       xp[part1]=xp[part1]+Deltap1cmx;
       zp[part1]=zp[part1]+Deltap1cmz;
