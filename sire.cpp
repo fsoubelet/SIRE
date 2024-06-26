@@ -2180,6 +2180,7 @@ int IBS(void) {
 
         cout << "dimp parameter (totz) = " << totz << endl;  // for reproduction / debugging
         cout << "Cell density = " << density << endl;  // for reproduction / debugging
+        cout << endl;  // for reproduction / debugging
 
         // Loop as long as the number of ??? is not 0 (collisions to do in the cell?)
         // Here limit1 starts as the number of particles in the cell - 1
@@ -2252,8 +2253,8 @@ int scatter(int part1, int part2, double dimp, double dens) {
     double betatilda, coulomb;
     double oneminuscospsi;
 
-    cout << "Particle 1 momenta: " << xp[part1] << zp[part1] << deltap[part1] << endl;  // for reproduction / debugging
-    cout << "Particle 2 momenta: " << xp[part2] << zp[part2] << deltap[part2] << endl;  // for reproduction / debugging
+    cout << "Particle 1 momenta: " << xp[part1] << " " << zp[part1] << " " << deltap[part1] << endl;  // for reproduction / debugging
+    cout << "Particle 2 momenta: " << xp[part2] << " " << zp[part2] << " " << deltap[part2] << endl;  // for reproduction / debugging
 
     // Computing the delta of relevant coordinates (momenta) between the two particles
     // Think this is computed in the center of mass (pcm)
@@ -2291,7 +2292,7 @@ int scatter(int part1, int part2, double dimp, double dens) {
             Deltap1cms = -Deltapcmn * oneminuscospsi / 2.0 * gammap;
         }
 
-        cout << "Deltas part 1 (+): " << Deltap1cmx << Deltap1cmz << Deltap1cms << endl;  // for reproduction / debugging
+        cout << "Deltas part 1 (+): " << Deltap1cmx << " " << Deltap1cmz << " " << Deltap1cms << endl;  // for reproduction / debugging
         cout << endl;  // for reproduction / debugging
 
         // We modify the coordinates of the 2 particles directly from this computed delta
