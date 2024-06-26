@@ -3979,8 +3979,10 @@ int IBS(void)
   
   for(cont2=0;cont2<ncelltot;cont2++)
     {
-      limit1=npart[cont2]-1;      
-      
+      limit1=npart[cont2]-1;
+	  cout << endl;
+	  cout << "CELL NUMBER: " << cont2 << endl;
+	  cout << "NUMBER OF PARTICLES: " << npart[cont2] << endl;
       if(ncollisions>=npart[cont2])
 	{
 	  ncolcel=limit1;
@@ -4062,7 +4064,13 @@ int scatter(int part1, int part2, double dimp, double dens)
   double  Psi,Phi,cosphi,sinphi,cospsi,sinpsi;
   double  betatilda,coulomb;
   double  oneminuscospsi;
-  
+
+  cout << "dimp parameter (totz) = " << dimp << endl;  // for reproduction / debugging 
+  cout << "Cell density = " << dens << endl;  // for reproduction / debugging 
+
+  cout << "Particle 1 momenta: " << xp[part1] << zp[part1] << deltap[part1] << endl;  // for reproduction / debugging 
+  cout << "Particle 2 momenta: " << xp[part2] << zp[part2] << deltap[part2] << endl;  // for reproduction / debugging 
+
   // angle change of colliding particles
   Deltapcmx=xp[part1]-xp[part2];
   Deltapcmz=zp[part1]-zp[part2];
@@ -4072,6 +4080,8 @@ int scatter(int part1, int part2, double dimp, double dens)
   Deltapcmn=sqrt(Deltapcmt*Deltapcmt+Deltapcms*Deltapcms);
   
   Phi=2*pi*ran2(); // The polar collision angle chosen randomly
+  cout << "Polar collision angle = " << Phi << endl;  // for reproduction / debugging 
+  cout << "" << endl;  // for reproduction / debugging
   cosphi=cos(Phi);
   sinphi=sin(Phi);
   
