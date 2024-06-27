@@ -2137,6 +2137,8 @@ int IBS(void) {
         npart[cell[cont]]++; // counts the number of macroparticles with the same integer
     }
 
+    cout << "Particle Cells Attribution: " << cell << endl;  // for reproduction / debugging
+
     // loop over the cells to do???
     for (cont2 = 0; cont2 < ncelltot; cont2++) {
         part[cont2] = (int *)malloc(npart[cont2] * sizeof(int));

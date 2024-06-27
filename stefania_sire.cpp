@@ -3956,6 +3956,8 @@ int IBS(void)
       npart[cell[cont]]++; // counts the number of macroparticles with the same integer       
     }
 
+  cout << "Particle Cells Attribution: " << cell << endl;  // for reproduction / debugging
+
   for(cont2=0;cont2<ncelltot;cont2++)
     {
       part[cont2]=(int*)malloc(npart[cont2]*sizeof(int)); 
@@ -3995,7 +3997,7 @@ int IBS(void)
       ncol=(int*)calloc(npart[cont2],sizeof(int));
       density=npart[cont2]*realn/deltacellx/deltacellz/deltacells/ncolcel; // cell density 
 	  limit2=limit1;
-      
+
 	  cout << "dimp parameter (totz) = " << totz << endl;  // for reproduction / debugging
       cout << "Cell density = " << density << endl;  // for reproduction / debugging
       cout << endl;  // for reproduction / debugging
