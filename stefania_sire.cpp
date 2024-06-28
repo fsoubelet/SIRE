@@ -606,7 +606,7 @@ int main(int narg, char *args[])
 		flag_def=1;
 		flag_renorm=0;	      
 		
-		cout << "ncellx = " << ncellx << "  ncellz = " << ncellz << endl;	      	      
+		// cout << "ncellx = " << ncellx << "  ncellz = " << ncellz << endl;	      	      
 	      }
 	    
 	      else if(KINJ>KINJ1 || i>0)
@@ -3956,7 +3956,13 @@ int IBS(void)
       npart[cell[cont]]++; // counts the number of macroparticles with the same integer       
     }
 
+  // For benchmark purposes I print out this array
+  cout << endl;
   cout << "Particle Cells Attribution: " << cell << endl;  // for reproduction / debugging
+  for (cont=0; cont<numpart; cont++) {
+	cout << cell[cont] << ", \n";  // cell number for particle "cont"
+  }
+  cout << endl;
 
   for(cont2=0;cont2<ncelltot;cont2++)
     {

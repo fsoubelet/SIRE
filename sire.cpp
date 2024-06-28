@@ -465,7 +465,7 @@ int main(int narg, char *args[]) {
                                 flag_def    = 1;
                                 flag_renorm = 0;
 
-                                cout << "ncellx = " << ncellx << "  ncellz = " << ncellz << endl;
+                                // cout << "ncellx = " << ncellx << "  ncellz = " << ncellz << endl;
                             }
 
                             else if (KINJ > KINJ1 || i > 0) {
@@ -2136,7 +2136,6 @@ int IBS(void) {
         cell[cont] = ((int)floor((deltasp[cont] - mins) / deltacells)) * ncellt + ((int)floor((z[cont] - minz) / deltacellz)) * ncellx + ((int)floor((x[cont] - minx) / deltacellx)); // calculation of the integer for this particle
         npart[cell[cont]]++; // counts the number of macroparticles with the same integer
     }
-
     cout << "Particle Cells Attribution: " << cell << endl;  // for reproduction / debugging
 
     // loop over the cells to do???
