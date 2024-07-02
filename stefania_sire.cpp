@@ -4084,26 +4084,39 @@ int scatter(int part1, int part2, double dimp, double dens)
   Deltapcmx=xp[part1]-xp[part2];
   Deltapcmz=zp[part1]-zp[part2];
   Deltapcms=(deltap[part1]-deltap[part2])/gammap;
+  cout << "Deltapcmx = " << Deltapcmx << endl;  // for reproduction / debugging
+  cout << "Deltapcmy = " << Deltapcmz << endl;  // for reproduction / debugging
+  cout << "Deltapcmz = " << Deltapcms << endl;  // for reproduction / debugging
+
   Deltapcmt=sqrt(Deltapcmx*Deltapcmx+Deltapcmz*Deltapcmz);
-  
   Deltapcmn=sqrt(Deltapcmt*Deltapcmt+Deltapcms*Deltapcms);
-  
+  cout << "Deltapcmt = " << Deltapcmt << endl;
+  cout << "Detlapcmn = " << Deltapcmn << endl;
+
   Phi=2*pi*ran2(); // The polar collision angle chosen randomly
-  cout << "Polar collision angle = " << Phi << endl;  // for reproduction / debugging
+  cout << "Polar collision angle (Phi) = " << Phi << endl;  // for reproduction / debugging
   cosphi=cos(Phi);
   sinphi=sin(Phi);
 
+  cout << "cosphi = " << cosphi << endl;  // for reproduction / debugging
+  cout << "sinphi = " << sinphi << endl;  // for reproduction / debugging
+  cout << "beta = " << beta << endl;  // for reproduction / debugging
+  cout << "gammap = " << gammap << endl;  // for reproduction / debugging
+
   betatilda=beta*gammap/2.0*Deltapcmn;
-  
   coulomb=dimp*betatilda*betatilda/radius;
+  cout << "betatilda = " << betatilda << endl;  // for reproduction / debugging
+  cout << "Coulomb = " << coulomb << endl;  // for reproduction / debugging
   
   if (coulomb > 1)
     {
       coulomb=log(coulomb);
+	  cout << "Coulog = " << coulomb << endl;  // for reproduction / debugging
       //Psi=sqpi*radius/gammap*sqrt(cvel*coulomb*dens*deltat/betatilda/betatilda/betatilda);
       
       oneminuscospsi=twopicvel*dens*radius*radius*deltat*coulomb/gammap/gammap/betatilda/betatilda/betatilda;
-      //cospsi=cos(Psi);
+      cout << "oneminuscospsi = " << oneminuscospsi << endl;  // for reproduction / debugging
+	  //cospsi=cos(Psi);
       //sinpsi=sin(Psi);
       sinpsi=sq2*sqrt(oneminuscospsi); // The azimuthal collision angle
       // Assuming Rutherford scattering, an effective scattering angle is computed (statistical effect) 

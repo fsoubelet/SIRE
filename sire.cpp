@@ -2262,22 +2262,37 @@ int scatter(int part1, int part2, double dimp, double dens) {
     Deltapcmx = xp[part1] - xp[part2];  // in horizontal
     Deltapcmz = zp[part1] - zp[part2];  // in vertical
     Deltapcms = (deltap[part1] - deltap[part2]) / gammap;  // in longitudinal, gammap is relativistic gamma
+    cout << "Deltapcmx = " << Deltapcmx << endl;  // for reproduction / debugging
+    cout << "Deltapcmy = " << Deltapcmz << endl;  // for reproduction / debugging
+    cout << "Deltapcmz = " << Deltapcms << endl;  // for reproduction / debugging
 
     // Total momentum change in transverse and then in total?
     Deltapcmt = sqrt(Deltapcmx * Deltapcmx + Deltapcmz * Deltapcmz);
     Deltapcmn = sqrt(Deltapcmt * Deltapcmt + Deltapcms * Deltapcms);
+    cout << "Deltapcmt = " << Deltapcmt << endl;
+    cout << "Detlapcmn = " << Deltapcmn << endl;
 
     // The angle change of colliding particles
     Phi       = 2 * pi * ran2(); // The polar collision angle, which is chosen randomly
-    cout << "Polar collision angle = " << Phi << endl;  // for reproduction / debugging
+    cout << "Polar collision angle (Phi) = " << Phi << endl;  // for reproduction / debugging
     cosphi    = cos(Phi);
     sinphi    = sin(Phi);
+
+    cout << "cosphi = " << cosphi << endl;  // for reproduction / debugging
+    cout << "sinphi = " << sinphi << endl;  // for reproduction / debugging
+    cout << "beta = " << beta << endl;  // for reproduction / debugging
+    cout << "gammap = " << gammap << endl;  // for reproduction / debugging
+
     betatilda = beta * gammap / 2.0 * Deltapcmn;
     coulomb   = dimp * betatilda * betatilda / radius;  // to be used for the coulomb logarithm?
+    cout << "betatilda = " << betatilda << endl;  // for reproduction / debugging
+    cout << "Coulomb = " << coulomb << endl;  // for reproduction / debugging
 
     if (coulomb > 1) {
         coulomb        = log(coulomb);
+	    cout << "Coulog = " << coulomb << endl;  // for reproduction / debugging
         oneminuscospsi = twopicvel * dens * radius * radius * deltat * coulomb / gammap / gammap / betatilda / betatilda / betatilda;
+        cout << "oneminuscospsi = " << oneminuscospsi << endl;  // for reproduction / debugging
         sinpsi         = sq2 * sqrt(oneminuscospsi); // The azimuthal collision angle
 
         // Assuming Rutherford scattering, an effective scattering angle is computed (statistical effect)
