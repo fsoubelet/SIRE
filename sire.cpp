@@ -1971,6 +1971,14 @@ int invtomom(int i) {
         zp[cont]      = -sqrt(ez[cont] / betaz[i]) * (alphaz[i] * cos(phiz[cont]) + sin(phiz[cont])) + disp1z[i] * deltap[cont];
     }
 
+    // My own addition: outputting the converted distribution to file
+    foutput = fopen("mom_dist.txt", "w");
+    fprintf(foutput, "x, xp, y, yp, deltap, deltasp\n");
+    for (cont=0; cont<numpart; cont++) {
+        fprintf(foutput, "%.9e, %.9e, %.9e, %.9e, %.9e, %.9e\n", x[cont], xp[cont], z[cont], zp[cont], deltap[cont], deltasp[cont]);
+    }
+    fclose(foutput);
+
     free(ex);
     free(ez);
     free(es);

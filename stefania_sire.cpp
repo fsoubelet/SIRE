@@ -3768,7 +3768,14 @@ int invtomom(int i)
       z[cont]=sqrt(ez[cont]*betaz[i])*cos(phiz[cont])+dispz[i]*deltap[cont];
       zp[cont]=-sqrt(ez[cont]/betaz[i])*(alphaz[i]*cos(phiz[cont])+sin(phiz[cont]))+disp1z[i]*deltap[cont];
     }
-  
+
+  // My own addition: outputting the converted distribution to file
+  foutput = fopen("momentum_space_distribution.txt", "w");
+  for (cont=0; cont<numpart; cont++) {
+    fprintf(foutput, "%.9e, %.9e, %.9e, %.9e, %.9e, %.9e\n", x[cont], xp[cont], z[cont], zp[cont], deltap[cont], deltasp[cont]);
+  }
+  fclose(foutput);
+
   free(ex);
   free(ez);
   free(es);
