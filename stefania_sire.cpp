@@ -3894,7 +3894,15 @@ int IBS(void)
   totx=(maxx-minx);
   totz=(maxz-minz);
   tots=(maxs-mins);
-  
+
+  // Outputting the determined limits of the mesh
+  cout << "Min x = " << minx << endl;
+  cout << "Max x = " << maxx << endl;
+  cout << "Min y = " << minz << endl;
+  cout << "Max y = " << maxz << endl;
+  cout << "Min z = " << mins << endl;
+  cout << "Max z = " << maxs << endl;
+
 //  ncellt=ncellx*ncellz;	// Number of cells in the transverse plane
   
 

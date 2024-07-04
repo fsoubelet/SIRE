@@ -2085,6 +2085,14 @@ int IBS(void) {
     totz = (maxz - minz);
     tots = (maxs - mins);
 
+    // Outputting the determined limits of the mesh
+    cout << "Min x = " << minx << endl;
+    cout << "Max x = " << maxx << endl;
+    cout << "Min y = " << minz << endl;
+    cout << "Max y = " << maxz << endl;
+    cout << "Min z = " << mins << endl;
+    cout << "Max z = " << maxs << endl;
+
     // Define the size of each cell.
     // The cells are equal with respect to their size in space (not current)
     // Each cell has to contain not too few but also not too many macroparticles to take into account of interactions with close encounters.
