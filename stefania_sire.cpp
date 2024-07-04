@@ -3943,10 +3943,13 @@ int IBS(void)
     ncells=999;
     deltacells=tots/ncells;
   }
-  
-  cout << "deltacellx = " << deltacellx << "  ncellx = " << ncellx << endl;
-  cout << "deltacellz = " << deltacellz << "  ncellz = " << ncellz << endl;
-  cout << "deltacells = " << deltacells << "  ncells = " << ncells << endl;
+
+  cout << "deltacellx = " << deltacellx << endl;
+  cout << "ncellx = " << ncellx << endl;
+  cout << "deltacellz = " << deltacellz << endl;
+  cout << "ncellz = " << ncellz << endl;
+  cout << "deltacells = " << deltacells << endl;
+  cout << "ncells = " << ncells << endl;
   
   ncellt=ncellx*ncellz;	// Number of cells in the transverse plane
   ncelltot=ncellt*ncells;
