@@ -3760,6 +3760,10 @@ int invtomom(int i)
       phix[cont]=2.0*pi*ran2();
       phiz[cont]=2.0*pi*ran2();
       phis[cont]=2.0*pi*ran2();
+
+    // TODO: HERE OUTPUT AGAIN THE INVARIANT SPACE DISTRIBUTION AND USE THIS ONE FOR MY CONVERSION CALCULATION
+	// TODO: PRINT THE INVTUNE AND THE DELTA / DELTAS TO MAKE SURE OF VALUES AND THIS IS HOW IT IS COMPUTED
+
       //  double *x,*xp,*z,*zp,*deltasp,*deltap
       deltap[cont]=sqrt(es[cont])*cos(phis[cont]);
       deltasp[cont]=sqrt(es[cont])*sin(phis[cont])/invtune;
@@ -3877,6 +3881,8 @@ int IBS(void)
 	      maxz=z[cont];
 	    }
 	}
+	  // WHY IS SIRE LOOKING AT DELTASP HERE AND NOT DELTA????
+	  // THIS IS WROOOOOOONG THIS IS THE WRONG COORDINATE
       if(deltasp[cont]<mins)
 	{
 	  mins=deltasp[cont];
@@ -3970,7 +3976,9 @@ int IBS(void)
   for(cont=0;cont<numpart;cont++)
     {
       // characteristic integer for each macroparticle. Macroparticles in the same cell will have the same integer (I think this based on a PIC (particles-in-cell) algorithmo (???) )
-      cell[cont]=((int)floor((deltasp[cont]-mins)/deltacells))*ncellt+((int)floor((z[cont]-minz)/deltacellz))*ncellx+((int)floor((x[cont]-minx)/deltacellx));             
+      cell[cont] = ((int)floor((x[cont] - minx) / deltacellx))
+	               + ((int)floor((z[cont] - minz) / deltacellz)) * ncellx
+	               + ((int)floor((deltasp[cont] - mins) / deltacells)) * ncellt;
       npart[cell[cont]]++; // counts the number of macroparticles with the same integer       
     }
 

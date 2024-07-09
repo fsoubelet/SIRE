@@ -2152,7 +2152,9 @@ int IBS(void) {
     // We loop over all particles and place them in cells by assigning a characteristic
     // integer: all macroparticles in the same cell will have the same integer
     for (cont = 0; cont < numpart; cont++) {
-        cell[cont] = ((int)floor((deltasp[cont] - mins) / deltacells)) * ncellt + ((int)floor((z[cont] - minz) / deltacellz)) * ncellx + ((int)floor((x[cont] - minx) / deltacellx)); // calculation of the integer for this particle
+        cell[cont] = ((int)floor((x[cont] - minx) / deltacellx))
+                     + ((int)floor((z[cont] - minz) / deltacellz)) * ncellx
+                     + ((int)floor((deltasp[cont] - mins) / deltacells)) * ncellt ; // calculation of the integer for this particle
         npart[cell[cont]]++; // counts the number of macroparticles with the same integer
     }
     cout << "Particle Cells Attribution: " << cell << endl;  // for reproduction / debugging
