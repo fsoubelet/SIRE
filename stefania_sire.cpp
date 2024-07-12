@@ -400,13 +400,16 @@ int main(int narg, char *args[])
   
   if (damping==0)
   {
+	cout << "Using delta = " << delta << " and deltas = " << deltas << endl;
     invtune=delta/deltas;	// Longitudinal invariant
   }
   else
   {
+	cout << "Using eqdelta = " << eqdelta << " and eqdeltas = " << eqdeltas << endl;
     invtune=eqdelta/eqdeltas;
   }
- 
+  cout << "INVTUNE = " << invtune << endl;
+
   idum=-time(0);  //@TODO : Check what happens if I set this constant to a number. What does RAN2 returns?
 
     
