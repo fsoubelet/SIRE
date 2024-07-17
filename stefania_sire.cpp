@@ -3944,7 +3944,6 @@ int IBS(void)
     ncells=ceil(tots/deltacells);
   }
   
-//  cout << "ncellx = " << ncellx << "   ncellz = " << ncellz << " ncells = " << ncells << endl;
      
   if(ncellx>=1000) 
   {
@@ -3969,8 +3968,8 @@ int IBS(void)
   cout << "deltacells = " << deltacells << endl;
   cout << "ncells = " << ncells << endl;
   
-  ncellt=ncellx*ncellz;	// Number of cells in the transverse plane
-  ncelltot=ncellt*ncells;
+  ncellt   = ncellx * ncellz; // Number of cells in the transverse plane
+  ncelltot = ncellt * ncells; // Total number of cells
 
 //BEGIN GROUPING PARTICLES IN CELLS
   
