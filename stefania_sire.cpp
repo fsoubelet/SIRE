@@ -4122,8 +4122,8 @@ int scatter(int part1, int part2, double dimp, double dens)
   cout << "Deltapcmt = " << Deltapcmt << endl;
   cout << "Detlapcmn = " << Deltapcmn << endl;
 
-  Phi=2*pi*ran2(); // The polar collision angle chosen randomly
-  cout << "Polar collision angle (Phi) = " << Phi << endl;  // for reproduction / debugging
+  Phi=2*pi*ran2(); // The azimuthal angle chosen randomly
+  cout << "Azimuthal angle (Phi) = " << Phi << endl;  // for reproduction / debugging
   cosphi=cos(Phi);
   sinphi=sin(Phi);
 

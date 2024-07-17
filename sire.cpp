@@ -2297,8 +2297,8 @@ int scatter(int part1, int part2, double dimp, double dens) {
     cout << "Detlapcmn = " << Deltapcmn << endl;
 
     // The angle change of colliding particles
-    Phi       = 2 * pi * ran2(); // The polar collision angle, which is chosen randomly
-    cout << "Polar collision angle (Phi) = " << Phi << endl;  // for reproduction / debugging
+    Phi       = 2 * pi * ran2(); // The azimuthal angle, which is chosen randomly
+    cout << "Azimuthal angle (Phi) = " << Phi << endl;  // for reproduction / debugging
     cosphi    = cos(Phi);
     sinphi    = sin(Phi);
 
