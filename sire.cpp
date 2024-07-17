@@ -2158,6 +2158,9 @@ int IBS(void) {
     // We loop over all particles and place them in cells by assigning a characteristic
     // integer: all macroparticles in the same cell will have the same integer
     for (cont = 0; cont < numpart; cont++) {
+        cout << "x[cont] = " << x[cont] << endl;  // for reproduction / debugging
+        cout << "z[cont] = " << z[cont] << endl;  // for reproduction / debugging
+        cout << "deltasp[cont] = " << deltasp[cont] << endl;  // for reproduction / debugging
         valx = (x[cont] - minx) / deltacellx;
         valz = (z[cont] - minz) / deltacellz;
         vals = (deltasp[cont] - mins) / deltacells;

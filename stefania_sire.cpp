@@ -3981,7 +3981,10 @@ int IBS(void)
   
   for(cont=0;cont<numpart;cont++) {
       // characteristic integer for each macroparticle. Macroparticles in the same cell will have the same integer (I think this based on a PIC (particles-in-cell) algorithmo (???) )
-      valx = (x[cont] - minx) / deltacellx;
+      cout << "x[cont] = " << x[cont] << endl;  // for reproduction / debugging
+	  cout << "z[cont] = " << z[cont] << endl;  // for reproduction / debugging
+	  cout << "deltasp[cont] = " << deltasp[cont] << endl;  // for reproduction / debugging
+	  valx = (x[cont] - minx) / deltacellx;
       valz = (z[cont] - minz) / deltacellz;
       vals = (deltasp[cont] - mins) / deltacells;
 	  cout << "valx = " << valx << endl;  // for reproduction / debugging
