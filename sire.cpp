@@ -2177,6 +2177,7 @@ int IBS(void) {
                      + ((int)floor((z[cont] - minz) / deltacellz)) * ncellx
                      + ((int)floor((deltasp[cont] - mins) / deltacells)) * ncellt ; // calculation of the integer for this particle
         npart[cell[cont]]++; // counts the number of macroparticles with the same integer
+        cout << "stored cell value = " << cell[cont] << endl;  // for reproduction / debugging
     }
     cout << "Particle Cells Attribution: " << cell << endl;  // for reproduction / debugging
 
