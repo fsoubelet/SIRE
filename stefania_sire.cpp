@@ -3929,6 +3929,8 @@ int IBS(void)
 // We are interested only in binary collisions due to charge. The further distance encounters will contribute to space charge, not the IBS
 
 //  cout << "flag_def = " << flag_def << endl;
+  cout << "flag_def = " << flag_def << endl;
+  cout << "flag_renorm = " << flag_renorm << endl;
   if(flag_def==1)
   {
     deltacellx=totx/ncellx;

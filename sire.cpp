@@ -2108,6 +2108,8 @@ int IBS(void) {
     // The cells are equal with respect to their size in space (not current)
     // Each cell has to contain not too few but also not too many macroparticles to take into account of interactions with close encounters.
     // We are interested only in binary collisions due to charge. The further distance encounters will contribute to space charge, not the IBS
+    cout << "flag_def = " << flag_def << endl;
+    cout << "flag_renorm = " << flag_renorm << endl;
     if (flag_def == 1) {  // true when (KINJ == KINJ1 && i == 0) in the main loop (i.e. not first IBS effect, not first element)
         deltacellx = totx / ncellx;
         deltacellz = totz / ncellz;
