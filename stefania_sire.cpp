@@ -3848,6 +3848,7 @@ int IBS(void)
   double maxx,minx,maxz,minz,maxs,mins;
 //  double deltacell,deltacellx,deltacellz,deltacells;
   double density,totx,totz,tots;
+  double valx, valz, vals;  // TODO: remove after debugging
   int cont,cont2,nump,scatterflag,dummy,dummy1,dummy2;
   int *cell,*npart,**part,*ncol; 
   int flag,comodino,j1,j2,conteur=0,limit1,limit2,ncolcel;  
@@ -3971,15 +3972,27 @@ int IBS(void)
   ncellt   = ncellx * ncellz; // Number of cells in the transverse plane
   ncelltot = ncellt * ncells; // Total number of cells
 
-//BEGIN GROUPING PARTICLES IN CELLS
-  
+  ///////////////////////////////////////
+  // BEGIN GROUPING PARTICLES IN CELLS //
+  ///////////////////////////////////////
   cell=(int*)malloc(numpart*sizeof(int)); 
   npart=(int*)calloc(ncelltot,sizeof(int));
   part=(int**)malloc(ncelltot*sizeof(int*));
   
-  for(cont=0;cont<numpart;cont++)
-    {
+  for(cont=0;cont<numpart;cont++) {
       // characteristic integer for each macroparticle. Macroparticles in the same cell will have the same integer (I think this based on a PIC (particles-in-cell) algorithmo (???) )
+      valx = (x[cont] - minx) / deltacellx;
+      valz = (z[cont] - minz) / deltacellz;
+      vals = (deltasp[cont] - mins) / deltacells;
+	  cout << "valx = " << valx << endl;  // for reproduction / debugging
+	  cout << "floor(valx) = " << floor(valx) << endl;  // for reproduction / debugging
+	  cout << "(int)floor(valx) = " << (int)floor(valx) << endl;  // for reproduction / debugging
+	  cout << "valz = " << valz << endl;  // for reproduction / debugging
+	  cout << "floor(valz) = " << floor(valz) << endl;  // for reproduction / debugging
+	  cout << "(int)floor(valz) = " << (int)floor(valz) << endl;  // for reproduction / debugging
+	  cout << "vals = " << vals << endl;  // for reproduction / debugging
+	  cout << "floor(vals) = " << floor(vals) << endl;  // for reproduction / debugging
+	  cout << "(int)floor(vals) = " << (int)floor(vals) << endl;  // for reproduction / debugging
       cell[cont] = ((int)floor((x[cont] - minx) / deltacellx))
 	               + ((int)floor((z[cont] - minz) / deltacellz)) * ncellx
 	               + ((int)floor((deltasp[cont] - mins) / deltacells)) * ncellt;
