@@ -2165,13 +2165,13 @@ int IBS(void) {
         valz = (z[cont] - minz) / deltacellz;
         vals = (deltasp[cont] - mins) / deltacells;
         cout << "valx = " << valx << endl;  // for reproduction / debugging
-        cout << "floor(valx) = " << floor(valx) << endl;  // for reproduction / debugging
-        cout << "(int)floor(valx) = " << (int)floor(valx) << endl;  // for reproduction / debugging
         cout << "valz = " << valz << endl;  // for reproduction / debugging
-        cout << "floor(valz) = " << floor(valz) << endl;  // for reproduction / debugging
-        cout << "(int)floor(valz) = " << (int)floor(valz) << endl;  // for reproduction / debugging
         cout << "vals = " << vals << endl;  // for reproduction / debugging
+        cout << "floor(valx) = " << floor(valx) << endl;  // for reproduction / debugging
+        cout << "floor(valz) = " << floor(valz) << endl;  // for reproduction / debugging
         cout << "floor(vals) = " << floor(vals) << endl;  // for reproduction / debugging
+        cout << "(int)floor(valx) = " << (int)floor(valx) << endl;  // for reproduction / debugging
+        cout << "(int)floor(valz) = " << (int)floor(valz) << endl;  // for reproduction / debugging
         cout << "(int)floor(vals) = " << (int)floor(vals) << endl;  // for reproduction / debugging
         cell[cont] = ((int)floor((x[cont] - minx) / deltacellx))
                      + ((int)floor((z[cont] - minz) / deltacellz)) * ncellx
