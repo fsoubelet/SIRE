@@ -3996,10 +3996,14 @@ int IBS(void)
 	  cout << "(int)floor(valx) = " << (int)floor(valx) << endl;  // for reproduction / debugging
 	  cout << "(int)floor(valz) = " << (int)floor(valz) << endl;  // for reproduction / debugging
 	  cout << "(int)floor(vals) = " << (int)floor(vals) << endl;  // for reproduction / debugging
-      cell[cont] = ((int)floor((x[cont] - minx) / deltacellx))
+      cell[cont] = (int)floor(valx) + (int)floor(valz) * ncellx + (int)floor(vals) * ncellt;
+    //   cell[cont] = ((int)floor((x[cont] - minx) / deltacellx))
+	//                + ((int)floor((z[cont] - minz) / deltacellz)) * ncellx
+	//                + ((int)floor((deltasp[cont] - mins) / deltacells)) * ncellt;
+      cout << "res = " << ((int)floor((x[cont] - minx) / deltacellx))
 	               + ((int)floor((z[cont] - minz) / deltacellz)) * ncellx
-	               + ((int)floor((deltasp[cont] - mins) / deltacells)) * ncellt;
-      npart[cell[cont]]++; // counts the number of macroparticles with the same integer       
+	               + ((int)floor((deltasp[cont] - mins) / deltacells)) * ncellt << endl;
+	  npart[cell[cont]]++; // counts the number of macroparticles with the same integer       
       cout << "stored cell value = " << cell[cont] << endl;  // for reproduction / debugging
 	}
 
