@@ -46,8 +46,8 @@ fastrun:         A boolean integer, 1 if interpolation is used every time step T
 continuation:    A boolean integer, 1 so that if a job is killed it continues from where it stopped, 0 otherwise.
 epsx:            The starting (geometrical!) horizontal emittance.
 epsz:            The starting (geometrical!) vertical emittance.
-delta:           The starting energy spread.
-deltas:          The starting bunch length. It should be given in [m] for the 1 sigma, then for 1ns blength (4sigma) in the paramfile we should put blength=(1ns/4)*clight. Whenever changing blength -> change also en.spread
+delta:           The starting relative energy spread.  Corresponds to SIGE in Twiss headers.
+deltas:          The starting bunch length, in [m]. Corresponds to SIGT in Twiss headers.
 dtimex:          The horizontal damping time.
 dtimez:          The vertical damping time.
 dtimes:          The longitudinal damping time.
