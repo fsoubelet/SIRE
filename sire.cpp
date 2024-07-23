@@ -2191,7 +2191,7 @@ int IBS(void) {
     ////////////////////////////////////////////////////////////
     // We loop over the cells
     for (cont2 = 0; cont2 < ncelltot; cont2++) {
-        limit1 = npart[cont2] - 1; // number of particles in this cell - 1
+        limit1 = npart[cont2] - 1; // number of particles in this cell - 1 - determines maybe ncollisions done
 
         cout << endl;  // for reproduction / debugging
         cout << "CELL NUMBER: " << cont2 << endl;  // for reproduction / debugging
@@ -2205,10 +2205,10 @@ int IBS(void) {
             ncolcel = ncollisions;  // number of collisions to do for this cell
         }
 
-        ncol    = (int *)calloc(npart[cont2], sizeof(int)); // count the number of collisions for a given part or cell??
+        ncol    = (int *)calloc(npart[cont2], sizeof(int)); // number of collisions for a given part or cell??
         density = npart[cont2] * realn / deltacellx / deltacellz / deltacells / ncolcel; // cell density number
         // density = n_macroparticles_in_cell * n_real_particles_per_macroparticle / (dx * dy * dz / number_of_collisions)
-        limit2  = limit1;
+        limit2  = limit1;  // starts as nparticles in cell - 1
 
         cout << "dimp parameter (totz) = " << totz << endl;  // for reproduction / debugging
         cout << "Cell density = " << density << endl;  // for reproduction / debugging
@@ -2222,13 +2222,13 @@ int IBS(void) {
                 exit(1);
             }
 
-            nump   = ncolcel - ncol[limit1];  // number of particles left to collide??
-            dummy1 = part[cont2][limit1];  // the ID of a given particle?? idk
+            nump   = ncolcel - ncol[limit1];  // number of collisions left for this cell - starts as the total number to do minus those done by the currently selected particle
+            dummy1 = part[cont2][limit1];  // the ID of a particle - starts as the "last" in the cell
 
-            // Loop over the particles
+            // Loop over the number of collisions left
             for (cont = 0; cont < nump; cont++) {
-                dummy  = (int)floor(ran2() * limit2);  // idk man :(
-                dummy2 = part[cont2][dummy];  // the ID of another particle??
+                dummy  = (int)floor(ran2() * limit2);  // random integer to be used to choose the paired particle
+                dummy2 = part[cont2][dummy];  // the ID of the second particle in the pair
 
                 // Call scatter function that takes care of computing the Coulomb
                 // kick and changing momenta for these two particles
