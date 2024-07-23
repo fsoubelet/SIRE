@@ -2153,8 +2153,8 @@ int IBS(void) {
     // BEGIN GROUPING PARTICLES IN CELLS //
     ///////////////////////////////////////
     cell  = (int *)malloc(numpart * sizeof(int));  // characteristic integer (see below) for each particle
-    npart = (int *)calloc(ncelltot, sizeof(int));  // number of particles with the same characteristic integer (per cell)
-    part  = (int **)malloc(ncelltot * sizeof(int *));  // ???
+    npart = (int *)calloc(ncelltot, sizeof(int));  // number of particles in the cell of the index (at idx 75 is number of parts in cell 75)
+    part  = (int **)malloc(ncelltot * sizeof(int *));  // array with for each cell ID and array of all the particle IDS in that cell
 
     // We loop over all particles and place them in cells by assigning a characteristic
     // integer: all macroparticles in the same cell will have the same integer
@@ -2168,6 +2168,8 @@ int IBS(void) {
 
     // loop over the cells to do???
     for (cont2 = 0; cont2 < ncelltot; cont2++) {
+        // for each cell (cont2) we allocate in part[cont2] an array (of ints)
+        // which will hold the indices of every particle in that given cell
         part[cont2] = (int *)malloc(npart[cont2] * sizeof(int));
     }
 
@@ -2175,9 +2177,10 @@ int IBS(void) {
     npart = (int *)calloc(ncelltot, sizeof(int)); // calloc is used to set memory to zero
     fflush(stdout);
 
+    // We look over all particles
     for (cont = 0; cont < numpart; cont++) {
-        part[cell[cont]][npart[cell[cont]]] = cont; // identity of the particle in the cell "cell" with number of particles "npart"??
-        npart[cell[cont]]++;                        // macro-particles per cell (it is used later for the definition of density)
+        part[cell[cont]][npart[cell[cont]]] = cont; // store the ID of this particle in part[cell[cont]] which stores all particles in that cell
+        npart[cell[cont]]++;                        // increment the known number of particles in that cell (cell[cont])
     }
     /////////////////////////////////////
     // END GROUPING PARTICLES IN CELLS //
