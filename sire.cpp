@@ -261,11 +261,13 @@ int main(int narg, char *args[]) {
 
     // Compute longitudinal invariant 'invtune'
     if (eqdeltas == 0) {  // if no equilibrium bunch length was given
-        cout << "Using delta = " << delta << " and deltas = " << deltas << endl;  // for debugging
+        cout << "Invtune = delta / deltas" << endl;  // for debugging
+        cout << "With delta = " << delta << " and deltas = " << deltas << endl;  // for debugging
         invtune = delta / deltas; // starting energy spread / starting bunch length
     }
     else {
-        cout << "Using eqdelta = " << eqdelta << " and eqdeltas = " << eqdeltas << endl;  // for debugging
+        cout << "Invtune = eqdelta / eqdeltas" << endl;  // for debugging
+        cout << "With eqdelta = " << eqdelta << " and eqdeltas = " << eqdeltas << endl;  // for debugging
         invtune = eqdelta / eqdeltas; // equilibrium energy spread / equilibrium bunch length
     }
     cout << "INVTUNE = " << invtune << endl;

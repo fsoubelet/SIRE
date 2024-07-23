@@ -400,12 +400,14 @@ int main(int narg, char *args[])
   
   if (damping==0)
   {
-	cout << "Using delta = " << delta << " and deltas = " << deltas << endl;
+	cout << "Invtune = delta / deltas" << endl;  // for debugging
+	cout << "With delta = " << delta << " and deltas = " << deltas << endl;
     invtune=delta/deltas;	// Longitudinal invariant
   }
   else
   {
-	cout << "Using eqdelta = " << eqdelta << " and eqdeltas = " << eqdeltas << endl;
+	cout << "Invtune = eqdelta / eqdeltas" << endl;  // for debugging
+	cout << "With eqdelta = " << eqdelta << " and eqdeltas = " << eqdeltas << endl;
     invtune=eqdelta/eqdeltas;
   }
   cout << "INVTUNE = " << invtune << endl;
