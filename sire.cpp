@@ -2235,6 +2235,7 @@ int IBS(void) {
                 scatterflag = scatter(dummy1, dummy2, totz, density);
 
                 // Here I have no clue...
+                // As evidenced by debugging output, logic is flawed as some particles collide with themselves
                 limit2--;
                 comodino            = ncol[dummy] + 1;
                 ncol[dummy]         = ncol[limit2];
