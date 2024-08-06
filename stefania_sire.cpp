@@ -112,7 +112,7 @@ int read_madx(char *filemadx);
 int read_input(char *fileinput);
 int read_distrib(char *filedist);
 int read_grates(char *filerate);
-int check(int pos1, int pos2);
+int check(int pos1, int pos2, double prec);
 int recurrences(void);
 int recurrences2(void);
 int invtomom(int i);
