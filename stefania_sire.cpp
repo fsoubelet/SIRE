@@ -60,7 +60,7 @@ double *x,*xp,*z,*zp,*deltasp,*deltap;
 double *ex,*ez,*es,*phix,*phiz,*phis;
 double *ex1,*ez1,*es1,*phix1,*phiz1,*phis1;
 double epsx,epsz,delta,deltas,numbunch,momentum,mppercell,energy,massparticle,chargeparticle,TEMPO,dummy;
-double invtune,gammap,T0,beta,radius,realn,deltat,media=0.0,deltatot=0.0;
+double invtune,gammap,T0,betarel,radius,realn,deltat,media=0.0,deltatot=0.0;
 int n,comodo,cont,flag,flag2,ncollisions,continuation=0,NIBSruns=0;;
 int i,npoints,numpart=0,nturns,oneturn,ncellx,ncellz,ncells,ncellt,ncelltot,ncell,flagangle=0,flagk1l=0;
 float d;
@@ -341,9 +341,9 @@ int main(int narg, char *args[])
   energy=sqrt(momentum*momentum+massparticle*massparticle);
   gammap=energy/massparticle;
   cout << "gamma = " << gammap << endl;
-  beta=sqrt(1-1/gammap/gammap);
+  betarel=sqrt(1-1/gammap/gammap);
     
-  T0=s[npoints-1]/beta/cvel;
+  T0=s[npoints-1]/betarel/cvel;
     
   circumference=s[npoints-1];  
   cout << "circumference = " << circumference << endl;
@@ -4132,10 +4132,10 @@ int scatter(int part1, int part2, double dimp, double dens)
 
   cout << "cosphi = " << cosphi << endl;  // for reproduction / debugging
   cout << "sinphi = " << sinphi << endl;  // for reproduction / debugging
-  cout << "beta = " << beta << endl;  // for reproduction / debugging
+  cout << "beta = " << betarel << endl;  // for reproduction / debugging
   cout << "gammap = " << gammap << endl;  // for reproduction / debugging
 
-  betatilda=beta*gammap/2.0*Deltapcmn;
+  betatilda=betarel*gammap/2.0*Deltapcmn;
   coulomb=dimp*betatilda*betatilda/radius;
   cout << "betatilda = " << betatilda << endl;  // for reproduction / debugging
   cout << "Coulomb = " << coulomb << endl;  // for reproduction / debugging
