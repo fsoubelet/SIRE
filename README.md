@@ -108,7 +108,7 @@ The main program execution flow goes as follows:
 The core of the performed calculations are the application of IBS kicks, which are done according to the steps below:
 
 1. Finds the limits of the distributions.
-2. The distributions are then split in cells (uniform split with respect to x, z and s coordinates).
+2. The distributions are then split in cells, which are a uniform split with respect to x and z (transverse) coordinates and longitudinal momentum.
 3. Macro-particles are put in the determined cells and the program calculates the number of macro-particles and their density in each cell.
 4. Scattering kicks are applied between macro-particles in the same cell, for each cell (binary collisions) -> redistribution of phase space.
 
