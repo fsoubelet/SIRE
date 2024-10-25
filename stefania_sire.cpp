@@ -3991,11 +3991,12 @@ int IBS(void)
   // For benchmark purposes I print out this array
   cout << endl;
   cout << "Particle Cells Attribution: " << cell << endl;  // for reproduction / debugging
-  cout << "[";
-  for (cont=0; cont<numpart; cont++) {
-	cout << cell[cont] << ", ";  // cell number for particle "cont"
-  }
-  cout << "]" << endl;
+  // for reproduction / debugging
+  //   cout << "[";
+  //   for (cont=0; cont<numpart; cont++) {
+  // 	cout << cell[cont] << ", ";  // cell number for particle "cont"
+  //   }
+  //   cout << "]" << endl;
 
   for(cont2=0;cont2<ncelltot;cont2++)
     {
