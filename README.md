@@ -67,7 +67,7 @@ numpart:         The number of macro-particles.
 ncellx:          The number of cells to use in the horizontal plane.
 ncellz:          The number of cells to use in the vertical plane.
 ncells:          The number of cells to use in the longitudinal plane.
-ncollisions:     The number of collisions per particle (close encounters).
+ncollisions:     The number of collisions per particle (close encounters) - or is it per cell? SIRE determines its own value most of the time.
 convsteadystate: Track until convergeance to steady-state not in full TEMPO time.
 checktime:       A boolean integer, 0 if you want to see the TEMPO, 1 to see the turns instead of the TEMPO.
 ```
