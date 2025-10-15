@@ -422,7 +422,7 @@ int main(int narg, char *args[]) {
         // because if that was asked, we need to exit the program
         if (KINJ - KINJ1) {
             // If we track until convergence to steady-state, not up to full TEMPO time
-            if (convsteadystate) {  
+            if (convsteadystate) {
                 diffx = (exm[KINJ] - exm[KINJ - 1]) / exm[KINJ - 1];
                 diffz = (ezm[KINJ] - ezm[KINJ - 1]) / ezm[KINJ - 1];
                 diffs = (esm[KINJ] - esm[KINJ - 1]) / esm[KINJ - 1];
@@ -480,14 +480,14 @@ int main(int narg, char *args[]) {
                         }
 
                         flag = invtomom(i); // CONVERT DISTRIBUTION TO MOMENTUM SPACE
-                        
+
                         // Compute a delta_t, used in the scattering routine
-                        deltat = lrep[i] / s[npoints - 1] * T0;  
+                        deltat = lrep[i] / s[npoints - 1] * T0;
                         cout << "deltat = " << deltat << endl;
                         if (fastrun)
                             deltat = deltat * nturns;
                         cout << "deltat = " << deltat << endl;
-                        
+
                         flag = IBS(); // APPLY IBS EFFECTS (PARTICLE KICKS)
                         flag = momtoinv(i); // CONVERT DISTRIBUTION BACK TO ACTION SPACE
 
@@ -500,7 +500,7 @@ int main(int narg, char *args[]) {
                             ezmt[i] = 0;
                             esmt[i] = 0;
 
-                            // Loop over particles below to get mean value 
+                            // Loop over particles below to get mean value
                             for (comodo = 0; comodo < numpart; comodo++) {
                                 exmt[i] += ex[comodo];
                                 ezmt[i] += ez[comodo];
@@ -538,7 +538,7 @@ int main(int narg, char *args[]) {
                         ez[comodo] = coupling * (ex[comodo] - coupling * ez[comodo]) / (1 - coupling) + (1 - coupling) * ez[comodo];
                     }
                 }
-                
+
                 if (fastrun)
                     n = nturns;
             } // End of loop in each turn
@@ -2169,12 +2169,12 @@ int IBS(void) {
     // loop over the cells to do???
     for (cont2 = 0; cont2 < ncelltot; cont2++) {
         // for each cell (cont2) we allocate in part[cont2] an array (of ints)
-        // which will hold the indices of every particle in that given cell
+        // which will hold the indices of every particle in that given cell?
         part[cont2] = (int *)malloc(npart[cont2] * sizeof(int));
     }
 
     free(npart);
-    npart = (int *)calloc(ncelltot, sizeof(int)); // calloc is used to set memory to zero
+    npart = (int *)calloc(ncelltot, sizeof(int));  // calloc is used to set memory to zero
     fflush(stdout);
 
     // We look over all particles
@@ -2208,6 +2208,7 @@ int IBS(void) {
         ncol    = (int *)calloc(npart[cont2], sizeof(int)); // number of collisions for a given part or cell??
         density = npart[cont2] * realn / deltacellx / deltacellz / deltacells / ncolcel; // cell density number
         // density = n_macroparticles_in_cell * n_real_particles_per_macroparticle / (dx * dy * dz / number_of_collisions)
+        // WHY DO WE DIVIDE BY THE NUMBER OF COLLISION FOR THE DENSITY????
         limit2  = limit1;  // starts as nparticles in cell - 1
 
         cout << "dimp parameter (totz) = " << totz << endl;  // for reproduction / debugging
@@ -2274,8 +2275,8 @@ int IBS(void) {
 
 // BEGIN SCATTER SUBROUTINE /////////////////////////////////////////////////////
 // Applies the scattering between two provided particles. This function relies on a FUCKTON of global variables.
-// part1 should be the ID of particle 1 or something
-// part2 should be the ID of particle 1 or something
+// part1 should be the ID of particle 1
+// part2 should be the ID of particle 2
 // dimp is given as 'totz' at call (in IBS func) which is the (maxz - minz) - total space in Y (remember in SIRE vertical is Z)
 // dens is the computed density (in IBS func)
 int scatter(int part1, int part2, double dimp, double dens) {
